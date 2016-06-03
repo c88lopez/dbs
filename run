@@ -1,0 +1,7 @@
+#! /bin/bash
+
+go run \
+main.go \
+schema.go \
+table.go \
+column.go \
