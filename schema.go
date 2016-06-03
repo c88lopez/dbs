@@ -1,13 +1,32 @@
 package main
 
+import (
+	"database/sql"
+	"log"
+)
+
 // Schema struct
 type Schema struct {
+	conn *sql.DB
+
 	name          string
 	charsetName   string
 	collationName string
 
 	tableCount int
 	tables     []Table
+}
+
+// SetConn func
+func (s *Schema) SetConn(conn *sql.DB) *Schema {
+	s.conn = conn
+
+	return s
+}
+
+// GetConn func
+func (s *Schema) GetConn() *sql.DB {
+	return s.conn
 }
 
 // SetName func
@@ -63,7 +82,26 @@ func (s *Schema) GetTables() []Table {
 
 // FetchTables func
 func (s *Schema) FetchTables() int {
-	totalTables := 0
+	s.tableCount = 0
 
-	return totalTables
+	rows, err := s.GetConn().Query("SHOW TABLES")
+
+	if err != nil {
+		log.Panic(err)
+	}
+
+	for rows.Next() {
+		var table Table
+
+		s.tableCount++
+
+		err = rows.Scan(&table.name)
+		if err != nil {
+			log.Panic(err)
+		}
+
+		s.tables = append(s.tables, table)
+	}
+
+	return s.tableCount
 }

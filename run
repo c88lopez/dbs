@@ -1,5 +1,7 @@
 #! /bin/bash
 
+# Adding files to the run
+
 go run \
 main.go \
 schema.go \
