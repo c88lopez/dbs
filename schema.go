@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 )
 
@@ -82,9 +83,14 @@ func (s *Schema) GetTables() []Table {
 
 // FetchTables func
 func (s *Schema) FetchTables() int {
+	var query string
+
 	s.tableCount = 0
 
-	rows, err := s.GetConn().Query("SHOW TABLES")
+	query = "SHOW TABLES;"
+	fmt.Println(query)
+
+	rows, err := s.GetConn().Query(query)
 
 	if err != nil {
 		log.Panic(err)
@@ -93,14 +99,29 @@ func (s *Schema) FetchTables() int {
 	for rows.Next() {
 		var table Table
 
-		s.tableCount++
-
 		err = rows.Scan(&table.name)
 		if err != nil {
 			log.Panic(err)
 		}
 
+		query = "SHOW CREATE TABLE " + table.GetName() + ";"
+		fmt.Println(query)
+
+		result, err := s.GetConn().Query(query)
+
+		if err != nil {
+			log.Panic(err)
+		}
+
+		var raw string
+
+		result.Scan(&raw)
+		fmt.Println(result)
+		fmt.Printf("%#v\n", raw)
+
 		s.tables = append(s.tables, table)
+
+		s.tableCount++
 	}
 
 	return s.tableCount
