@@ -109,6 +109,9 @@ func (s *Schema) FetchTables() int {
 
 		var result *sql.Rows
 		result, err = s.GetConn().Query(query)
+		if err != nil {
+			log.Panic(err)
+		}
 
 		type TableRaw struct {
 			a string
@@ -117,13 +120,9 @@ func (s *Schema) FetchTables() int {
 
 		var tr TableRaw
 
-		result.Next()
-		result.Scan(&tr.a, &tr.b)
-
-		fmt.Printf("%#v\n", tr)
-
-		if err != nil {
-			log.Panic(err)
+		for result.Next() {
+			result.Scan(&tr.a, &tr.b)
+			fmt.Printf("%#v\n", tr)
 		}
 
 		s.tables = append(s.tables, table)
