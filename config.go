@@ -8,23 +8,21 @@ import (
 
 // Config struct
 type Config struct {
-	Driver   string
-	Username string
-	Password string
-	Database string
+	Driver   string `json:"driver"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Database string `json:"database"`
 }
 
 func (c *Config) loadConfig() *Config {
-	configFile, err := os.Open("config.go")
+	configFile, err := os.Open("config.json")
 	if err != nil {
 		log.Panic(err)
 	}
 
 	decoder := json.NewDecoder(configFile)
 
-	config := Config{}
-
-	err = decoder.Decode(&config)
+	err = decoder.Decode(&c)
 	if err != nil {
 		log.Panic(err)
 	}

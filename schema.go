@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 // Schema struct
@@ -83,11 +85,9 @@ func (s *Schema) GetTables() []Table {
 
 // FetchTables func
 func (s *Schema) FetchTables() int {
-	var query string
-
 	s.tableCount = 0
 
-	query = "SHOW TABLES;"
+	query := "SHOW TABLES;"
 	fmt.Println(query)
 
 	rows, err := s.GetConn().Query(query)
@@ -107,17 +107,24 @@ func (s *Schema) FetchTables() int {
 		query = "SHOW CREATE TABLE " + table.GetName() + ";"
 		fmt.Println(query)
 
-		result, err := s.GetConn().Query(query)
+		var result *sql.Rows
+		result, err = s.GetConn().Query(query)
+
+		type TableRaw struct {
+			a string
+			b string
+		}
+
+		var tr TableRaw
+
+		result.Next()
+		result.Scan(&tr.a, &tr.b)
+
+		fmt.Printf("%#v\n", tr)
 
 		if err != nil {
 			log.Panic(err)
 		}
-
-		var raw string
-
-		result.Scan(&raw)
-		fmt.Println(result)
-		fmt.Printf("%#v\n", raw)
 
 		s.tables = append(s.tables, table)
 
