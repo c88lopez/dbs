@@ -4,6 +4,7 @@
 
 go run \
 main.go \
+config.go \
 schema.go \
 table.go \
 column.go \

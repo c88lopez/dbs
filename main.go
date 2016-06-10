@@ -9,7 +9,11 @@ import (
 )
 
 func main() {
-	db, err := sql.Open("mysql", "root:qweqwe@/dbs")
+	config := new(Config)
+	config.loadConfig()
+
+	db, err := sql.Open(config.getDriver(),
+		config.getUsername()+":"+config.getPassword()+"@/"+config.getDatabase())
 
 	if err != nil {
 		log.Panic(err)
