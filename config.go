@@ -15,7 +15,7 @@ type Config struct {
 }
 
 func (c *Config) loadConfig() *Config {
-	configFile, err := os.Open("config.json")
+	configFile, err := os.Open("config/database.json")
 	if err != nil {
 		log.Panic(err)
 	}
