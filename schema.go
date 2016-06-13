@@ -74,7 +74,10 @@ func (s *Schema) LoadTables() bool {
 }
 
 // AddTable func
-func (s *Schema) AddTable(t *Table) *Schema {
+func (s *Schema) AddTable(t Table) *Schema {
+	s.tables = append(s.tables, t)
+	s.tableCount++
+
 	return s
 }
 
@@ -87,10 +90,7 @@ func (s *Schema) GetTables() []Table {
 func (s *Schema) FetchTables() int {
 	s.tableCount = 0
 
-	query := "SHOW TABLES;"
-	fmt.Println(query)
-
-	rows, err := s.GetConn().Query(query)
+	rows, err := s.GetConn().Query("SHOW TABLES")
 
 	if err != nil {
 		log.Panic(err)
@@ -104,31 +104,12 @@ func (s *Schema) FetchTables() int {
 			log.Panic(err)
 		}
 
-		query = "SHOW CREATE TABLE " + table.GetName() + ";"
-		fmt.Println(query)
+		table.SetConn(s.GetConn()).FetchColumns()
 
-		var result *sql.Rows
-		result, err = s.GetConn().Query(query)
-		if err != nil {
-			log.Panic(err)
-		}
-
-		type TableRaw struct {
-			a string
-			b string
-		}
-
-		var tr TableRaw
-
-		for result.Next() {
-			result.Scan(&tr.a, &tr.b)
-			fmt.Printf("%#v\n", tr)
-		}
-
-		s.tables = append(s.tables, table)
-
-		s.tableCount++
+		s.AddTable(table)
 	}
+
+	fmt.Printf("%#v\n", s)
 
 	return s.tableCount
 }

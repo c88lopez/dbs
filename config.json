@@ -1,6 +1,6 @@
 {
     "driver": "mysql",
     "username": "root",
-    "password": "",
-    "database": "ruby"
+    "password": "qweqwe",
+    "database": "dbs"
 }
