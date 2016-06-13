@@ -4,8 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-
-	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
@@ -19,15 +17,14 @@ func main() {
 		log.Panic(err)
 	}
 
-	schema := new(Schema)
-
-	err = db.Ping()
-	if err != nil {
+	if db.Ping() != nil {
 		log.Panic(err)
 	}
+
+	schema := new(Schema)
 
 	schema.SetConn(db)
 	schema.FetchTables()
 
-	fmt.Println(schema.GetTables())
+	fmt.Println(schema)
 }
