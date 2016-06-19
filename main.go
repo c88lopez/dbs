@@ -7,22 +7,35 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+var config Config
 var dbConnPool *sql.DB
 
 func main() {
-	var err error
+	loadConfiguration()
+	startConnectionPool()
+	buildSchemaState(config)
+}
 
+func loadConfiguration() {
 	config := new(Config)
 	config.loadConfig()
+}
 
-	dbConnPool, err = sql.Open(config.getDriver(),
-		config.getUsername()+":"+config.getPassword()+"@/"+config.getDatabase())
+func startConnectionPool() {
+	var dsn string
+	var err error
+
+	dsn = config.getUsername()
+	dsn += ":" + config.getPassword()
+	dsn += +"@/" + config.getDatabase()
+
+	dbConnPool, err = sql.Open(config.getDriver(), dsn)
 
 	if err != nil {
 		log.Panic(err)
 	}
 
-	buildSchemaState(config)
+	defer dbConnPool.Close()
 }
 
 func buildSchemaState(config *Config) {
