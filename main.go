@@ -13,7 +13,7 @@ var dbConnPool *sql.DB
 func main() {
 	loadConfiguration()
 	startConnectionPool()
-	buildSchemaState(config)
+	buildSchemaState()
 }
 
 func loadConfiguration() {
@@ -27,7 +27,7 @@ func startConnectionPool() {
 
 	dsn = config.getUsername()
 	dsn += ":" + config.getPassword()
-	dsn += +"@/" + config.getDatabase()
+	dsn += "@/" + config.getDatabase()
 
 	dbConnPool, err = sql.Open(config.getDriver(), dsn)
 
@@ -38,7 +38,7 @@ func startConnectionPool() {
 	defer dbConnPool.Close()
 }
 
-func buildSchemaState(config *Config) {
+func buildSchemaState() {
 	schema := new(Schema)
 
 	schema.SetConn(dbConnPool)
