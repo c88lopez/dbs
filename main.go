@@ -2,26 +2,33 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
+var dbConnPool *sql.DB
+
 func main() {
+	var err error
+
 	config := new(Config)
 	config.loadConfig()
 
-	db, err := sql.Open(config.getDriver(),
+	dbConnPool, err = sql.Open(config.getDriver(),
 		config.getUsername()+":"+config.getPassword()+"@/"+config.getDatabase())
 
 	if err != nil {
 		log.Panic(err)
 	}
 
+	buildSchemaState(config)
+}
+
+func buildSchemaState(config *Config) {
 	schema := new(Schema)
 
-	schema.SetConn(db)
+	schema.SetConn(dbConnPool)
 	schema.SetName(config.getDatabase())
-	schema.FetchTables()
-
-	fmt.Println(schema)
+	schema.LoadInformationSchema().FetchTables()
 }

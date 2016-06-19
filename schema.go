@@ -4,8 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-
-	_ "github.com/go-sql-driver/mysql"
 )
 
 // Schema struct
@@ -86,6 +84,24 @@ func (s *Schema) GetTables() []Table {
 	return s.tables
 }
 
+// LoadInformationSchema func
+func (s *Schema) LoadInformationSchema() *Schema {
+	rows, err := s.GetConn().Query("SELECT DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '" + s.GetName() + "'")
+	if err != nil {
+		log.Panic(err)
+	}
+	defer rows.Close()
+
+	rows.Next()
+
+	var charset, collation string
+	rows.Scan(&charset, &collation)
+
+	s.SetCharsetName(charset).SetCollationName(collation)
+
+	return s
+}
+
 // FetchTables func
 func (s *Schema) FetchTables() int {
 	s.tableCount = 0
@@ -95,6 +111,7 @@ func (s *Schema) FetchTables() int {
 	if err != nil {
 		log.Panic(err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var table Table
