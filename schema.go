@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -108,8 +107,6 @@ func (s *Schema) FetchTables() int {
 
 		s.AddTable(table)
 	}
-
-	fmt.Printf("%#v\n", s)
 
 	return s.tableCount
 }

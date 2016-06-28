@@ -17,14 +17,10 @@ func main() {
 		log.Panic(err)
 	}
 
-	if db.Ping() != nil {
-		log.Panic(err)
-	}
-
 	schema := new(Schema)
 
 	schema.SetConn(db)
 	schema.FetchTables()
 
-	fmt.Println(schema)
+	fmt.Println("vamo lo pibe")
 }
