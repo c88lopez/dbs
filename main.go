@@ -12,6 +12,9 @@ var config = new(Config)
 var dbConnPool *sql.DB
 
 func main() {
+	fmt.Println("** Welcome ton DBS **")
+	fmt.Println("")
+
 	loadConfiguration()
 
 	startConnectionPool()
@@ -21,29 +24,27 @@ func main() {
 }
 
 func loadConfiguration() {
+	fmt.Print("Loading configuration... ")
+
 	config.loadConfig()
+
+	fmt.Println("Done.")
 }
 
 func startConnectionPool() {
+	fmt.Print("Initializing connection pool... ")
+
 	var dsn string
 	var err error
 
-	dsn = config.getUsername()
-	dsn += ":" + config.getPassword()
-	dsn += "@/" + config.getDatabase()
+	dsn = config.getUsername() + ":" + config.getPassword() + "@/" + config.getDatabase()
 
 	dbConnPool, err = sql.Open(config.getDriver(), dsn)
-
 	if err != nil {
 		log.Panic(err)
 	}
 
-	schema := new(Schema)
-
-	schema.SetConn(db)
-	schema.FetchTables()
-
-	fmt.Println("vamo lo pibe")
+	fmt.Println("Done.")
 }
 
 func buildSchemaState() {
