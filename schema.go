@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 )
 
@@ -125,8 +124,6 @@ func (s *Schema) FetchTables() int {
 
 		s.AddTable(table)
 	}
-
-	fmt.Printf("%#v\n", s)
 
 	return s.tableCount
 }

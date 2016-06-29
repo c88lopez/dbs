@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -36,6 +37,13 @@ func startConnectionPool() {
 	if err != nil {
 		log.Panic(err)
 	}
+
+	schema := new(Schema)
+
+	schema.SetConn(db)
+	schema.FetchTables()
+
+	fmt.Println("vamo lo pibe")
 }
 
 func buildSchemaState() {
