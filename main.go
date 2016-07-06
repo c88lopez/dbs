@@ -9,13 +9,16 @@ import (
 	"crypto/sha1"
 
 	_ "github.com/go-sql-driver/mysql"
+	"time"
 )
 
 var config = new(Config)
 var dbConnPool *sql.DB
 
 func main() {
-	fmt.Println("** Welcome ton DBS **")
+	start := time.Now()
+
+	fmt.Println("** Welcome to DBS **")
 	fmt.Println("")
 
 	loadConfiguration()
@@ -25,6 +28,8 @@ func main() {
 	generateJsonSchemaState(s)
 
 	dbConnPool.Close()
+
+	fmt.Printf("Elapsed time: %s\n", time.Since(start))
 }
 
 func loadConfiguration() {
