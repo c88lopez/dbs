@@ -52,15 +52,20 @@ func startConnectionPool() {
 }
 
 func buildSchemaState() *Schema {
+	fmt.Print("Building schema state... ")
 	schema := new(Schema)
 
 	schema.SetName(config.getDatabase())
 	schema.LoadInformationSchema().FetchTables()
 
+	fmt.Println("Done.")
+
 	return schema
 }
 
 func generateJsonSchemaState(s *Schema) {
+	fmt.Print("Generating json... ")
+
 	schemaJson, err := json.Marshal(s)
 	if err != nil {
 		log.Panic(err)
@@ -73,4 +78,6 @@ func generateJsonSchemaState(s *Schema) {
 	bs := hasher.Sum(nil)
 
 	fmt.Printf("%x\n", bs)
+
+	fmt.Println("Done.")
 }
