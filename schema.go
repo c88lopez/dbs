@@ -7,62 +7,53 @@ import (
 
 // Schema struct
 type Schema struct {
-	conn *sql.DB
+	Name          string `json:"name"`
+	CharsetName   string `json:"charsetName"`
+	CollationName string `json:"collationName"`
 
-	name          string
-	charsetName   string
-	collationName string
-
-	tableCount int
-	tables     []Table
-}
-
-// SetConn func
-func (s *Schema) SetConn(conn *sql.DB) *Schema {
-	s.conn = conn
-
-	return s
+	TableCount int     `json:"tableCount"`
+	Tables     []Table `json:"tables"`
 }
 
 // GetConn func
 func (s *Schema) GetConn() *sql.DB {
-	return s.conn
+	return dbConnPool
 }
 
 // SetName func
 func (s *Schema) SetName(name string) *Schema {
-	s.name = name
+	s.Name = name
 
 	return s
 }
 
 // GetName func
 func (s *Schema) GetName() string {
-	return s.name
+	return s.Name
 }
 
 // SetCharsetName func
 func (s *Schema) SetCharsetName(charsetName string) *Schema {
-	s.charsetName = charsetName
+	s.CharsetName = charsetName
 
 	return s
 }
 
 // GetCharsetName func
 func (s *Schema) GetCharsetName() string {
-	return s.charsetName
+	return s.CharsetName
 }
 
 // SetCollationName func
 func (s *Schema) SetCollationName(collationName string) *Schema {
-	s.collationName = collationName
+	s.CollationName = collationName
 
 	return s
 }
 
 // GetCollationName func
 func (s *Schema) GetCollationName() string {
-	return s.collationName
+	return s.CollationName
 }
 
 // LoadTables func
@@ -72,15 +63,15 @@ func (s *Schema) LoadTables() bool {
 
 // AddTable func
 func (s *Schema) AddTable(t Table) *Schema {
-	s.tables = append(s.tables, t)
-	s.tableCount++
+	s.Tables = append(s.Tables, t)
+	s.TableCount++
 
 	return s
 }
 
 // GetTables func
 func (s *Schema) GetTables() []Table {
-	return s.tables
+	return s.Tables
 }
 
 // LoadInformationSchema func
@@ -103,7 +94,7 @@ func (s *Schema) LoadInformationSchema() *Schema {
 
 // FetchTables func
 func (s *Schema) FetchTables() int {
-	s.tableCount = 0
+	s.TableCount = 0
 
 	rows, err := s.GetConn().Query("SHOW TABLES")
 
@@ -115,15 +106,15 @@ func (s *Schema) FetchTables() int {
 	for rows.Next() {
 		var table Table
 
-		err = rows.Scan(&table.name)
+		err = rows.Scan(&table.Name)
 		if err != nil {
 			log.Panic(err)
 		}
 
-		table.SetConn(s.GetConn()).FetchColumns()
+		table.FetchColumns()
 
 		s.AddTable(table)
 	}
 
-	return s.tableCount
+	return s.TableCount
 }

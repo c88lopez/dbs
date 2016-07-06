@@ -2,8 +2,11 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
+
+	"crypto/sha1"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -18,7 +21,8 @@ func main() {
 	loadConfiguration()
 
 	startConnectionPool()
-	buildSchemaState()
+	s := buildSchemaState()
+	generateJsonSchemaState(s)
 
 	dbConnPool.Close()
 }
@@ -47,10 +51,26 @@ func startConnectionPool() {
 	fmt.Println("Done.")
 }
 
-func buildSchemaState() {
+func buildSchemaState() *Schema {
 	schema := new(Schema)
 
-	schema.SetConn(dbConnPool)
 	schema.SetName(config.getDatabase())
 	schema.LoadInformationSchema().FetchTables()
+
+	return schema
+}
+
+func generateJsonSchemaState(s *Schema) {
+	schemaJson, err := json.Marshal(s)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Printf("%s\n", string(schemaJson))
+
+	hasher := sha1.New()
+	hasher.Write([]byte(string(schemaJson)))
+	bs := hasher.Sum(nil)
+
+	fmt.Printf("%x\n", bs)
 }

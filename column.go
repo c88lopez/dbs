@@ -2,10 +2,10 @@ package main
 
 // Column struct
 type Column struct {
-	name         string
-	datatype     string
-	nullable     string
-	isKey        string
-	defaultValue string
-	extra        string
+	Name         string `json:"name"`
+	Datatype     string `json:"datatype"`
+	Nullable     string `json:"nullable"`
+	IsKey        string `json:"isKey"`
+	DefaultValue string `json:"defaultValue"`
+	Extra        string `json:"extra"`
 }

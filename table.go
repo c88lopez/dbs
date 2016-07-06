@@ -7,43 +7,34 @@ import (
 
 // Table struct
 type Table struct {
-	conn *sql.DB
+	Name string `json:"name"`
 
-	name string
+	Columns []Column `json:"columns"`
 
-	columns []Column
-
-	engine         string
-	defaultCharset string
-}
-
-// SetConn func
-func (t *Table) SetConn(conn *sql.DB) *Table {
-	t.conn = conn
-
-	return t
+	Engine         string `json:"engine"`
+	DefaultCharset string `json:"defaultCharset"`
 }
 
 // GetConn func
 func (t *Table) GetConn() *sql.DB {
-	return t.conn
+	return dbConnPool
 }
 
 // SetName func
 func (t *Table) SetName(name string) *Table {
-	t.name = name
+	t.Name = name
 
 	return t
 }
 
 // GetName func
 func (t *Table) GetName() string {
-	return t.name
+	return t.Name
 }
 
 // AddColumn func
 func (t *Table) AddColumn(c Column) *Table {
-	t.columns = append(t.columns, c)
+	t.Columns = append(t.Columns, c)
 
 	return t
 }
@@ -61,12 +52,12 @@ func (t *Table) FetchColumns() *Table {
 	for result.Next() {
 		var column Column
 
-		result.Scan(&column.name,
-			&column.datatype,
-			&column.nullable,
-			&column.isKey,
-			&column.defaultValue,
-			&column.extra)
+		result.Scan(&column.Name,
+			&column.Datatype,
+			&column.Nullable,
+			&column.IsKey,
+			&column.DefaultValue,
+			&column.Extra)
 
 		t.AddColumn(column)
 	}
