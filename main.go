@@ -10,6 +10,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"time"
+	"os"
 )
 
 var config = new(Config)
@@ -18,8 +19,10 @@ var dbConnPool *sql.DB
 func main() {
 	start := time.Now()
 
-	fmt.Println("** Welcome to DBS **")
-	fmt.Println("")
+	fmt.Printf("** Welcome to DBS **\n")
+	fmt.Printf("Version 0.0.1\n\n")
+
+	fmt.Printf("%#v", os.Args[1:])
 
 	loadConfiguration()
 
@@ -33,15 +36,15 @@ func main() {
 }
 
 func loadConfiguration() {
-	fmt.Print("Loading configuration... ")
+	fmt.Printf("Loading configuration... ")
 
 	config.loadConfig()
 
-	fmt.Println("Done.")
+	fmt.Printf("Done.\n")
 }
 
 func startConnectionPool() {
-	fmt.Print("Initializing connection pool... ")
+	fmt.Printf("Initializing connection pool... ")
 
 	var dsn string
 	var err error
@@ -53,7 +56,7 @@ func startConnectionPool() {
 		log.Panic(err)
 	}
 
-	fmt.Println("Done.")
+	fmt.Print("Done.\n")
 }
 
 func buildSchemaState() *Schema {
@@ -76,7 +79,7 @@ func generateJsonSchemaState(s *Schema) {
 		log.Panic(err)
 	}
 
-	fmt.Printf("%s\n", string(schemaJson))
+	//fmt.Printf("%s\n", string(schemaJson))
 
 	hasher := sha1.New()
 	hasher.Write([]byte(string(schemaJson)))
@@ -84,5 +87,5 @@ func generateJsonSchemaState(s *Schema) {
 
 	fmt.Printf("%x\n", bs)
 
-	fmt.Println("Done.")
+	fmt.Printf("Done.\n")
 }

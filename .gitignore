@@ -1,2 +1,3 @@
 config/database.json
 .idea
+saraza_bench_test.go
