@@ -10,6 +10,8 @@ import (
 
 	"time"
 
+	"os"
+
 	"github.com/fatih/color"
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -19,23 +21,41 @@ var dbConnPool *sql.DB
 func main() {
 	start := time.Now()
 
-	fmt.Printf("** Welcome to DBS **\n")
-	fmt.Printf("Version 0.0.1\n\n")
+	displayHeader()
 
-	setConfigFilePath()
-	generateConfigFile()
+	if len(os.Args) == 1 {
+		showHelp()
+	} else {
+		switch os.Args[1] {
+		default:
+			showHelp()
+		case "init":
+			generateInitFolder()
+			break
+		case "generate-config-file":
+			setConfigFilePath()
+			generateConfigFile()
+			break
+		case "build-schema-state":
+			setConfigFilePath()
+			loadConfiguration()
 
-	loadConfiguration()
+			startConnectionPool()
+			s := buildSchemaState()
+			generateJsonSchemaState(s)
 
-	//generateInitFolder()
+			dbConnPool.Close()
 
-	startConnectionPool()
-	s := buildSchemaState()
-	generateJsonSchemaState(s)
-
-	dbConnPool.Close()
+			break
+		}
+	}
 
 	fmt.Printf("Elapsed time: %s\n", time.Since(start))
+}
+
+func displayHeader() {
+	fmt.Printf("** Welcome to DBS **\n")
+	fmt.Printf("Version 0.0.1\n\n")
 }
 
 func loadConfiguration() {
