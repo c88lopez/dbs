@@ -8,3 +8,5 @@ config.go \
 schema.go \
 table.go \
 column.go \
+version.go \
+help.go\

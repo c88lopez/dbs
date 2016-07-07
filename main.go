@@ -8,12 +8,12 @@ import (
 
 	"crypto/sha1"
 
-	_ "github.com/go-sql-driver/mysql"
 	"time"
-	"os"
+
+	"github.com/fatih/color"
+	_ "github.com/go-sql-driver/mysql"
 )
 
-var config = new(Config)
 var dbConnPool *sql.DB
 
 func main() {
@@ -22,9 +22,12 @@ func main() {
 	fmt.Printf("** Welcome to DBS **\n")
 	fmt.Printf("Version 0.0.1\n\n")
 
-	fmt.Printf("%#v", os.Args[1:])
+	setConfigFilePath()
+	generateConfigFile()
 
 	loadConfiguration()
+
+	//generateInitFolder()
 
 	startConnectionPool()
 	s := buildSchemaState()
@@ -40,7 +43,7 @@ func loadConfiguration() {
 
 	config.loadConfig()
 
-	fmt.Printf("Done.\n")
+	color.Green("Done.\n")
 }
 
 func startConnectionPool() {
@@ -56,7 +59,7 @@ func startConnectionPool() {
 		log.Panic(err)
 	}
 
-	fmt.Print("Done.\n")
+	color.Green("Done.\n")
 }
 
 func buildSchemaState() *Schema {
@@ -66,7 +69,7 @@ func buildSchemaState() *Schema {
 	schema.SetName(config.getDatabase())
 	schema.LoadInformationSchema().FetchTables()
 
-	fmt.Println("Done.")
+	color.Green("Done.\n")
 
 	return schema
 }
@@ -79,13 +82,11 @@ func generateJsonSchemaState(s *Schema) {
 		log.Panic(err)
 	}
 
-	//fmt.Printf("%s\n", string(schemaJson))
-
 	hasher := sha1.New()
 	hasher.Write([]byte(string(schemaJson)))
 	bs := hasher.Sum(nil)
 
-	fmt.Printf("%x\n", bs)
+	fmt.Printf("Json hash: %x\n", bs)
 
-	fmt.Printf("Done.\n")
+	color.Green("Done.\n")
 }
