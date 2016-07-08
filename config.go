@@ -3,11 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
-
-	"github.com/fatih/color"
 )
 
 var configFilePath string
@@ -28,42 +25,17 @@ func setConfigFilePath() {
 		log.Panic(err)
 	}
 
-	configFilePath = dir + "/.dbsconfig.json"
-}
-
-func generateConfigFile() {
-	fmt.Printf("Generating config file... ")
-
-	baseConfig := Config{
-		Driver:   "mysql",
-		Username: "root",
-		Password: "root",
-		Database: "test",
-	}
-
-	json, err := json.Marshal(baseConfig)
-	if err != nil {
-		log.Panic(err)
-	}
-
-	setConfigFilePath()
-	if _, err := os.Stat(configFilePath); os.IsNotExist(err) {
-		err = ioutil.WriteFile(configFilePath, json, 0775)
-		if err != nil {
-			log.Panic(err)
-		}
-
-		color.Green("Done.\n")
-	} else {
-		color.Yellow("File already exist!.\n")
-	}
+	configFilePath = dir + "/.dbs/config"
 }
 
 func (c *Config) loadConfig() *Config {
+	setConfigFilePath()
+
 	configFile, err := os.Open(configFilePath)
 	if err != nil {
 		log.Panic(err)
 	}
+	defer configFile.Close()
 
 	decoder := json.NewDecoder(configFile)
 
@@ -73,6 +45,43 @@ func (c *Config) loadConfig() *Config {
 	}
 
 	return c
+}
+
+func setDatabaseConfigInteractively() {
+	fmt.Printf("Configuring database parameters...\n")
+
+	var username, password, database string
+
+	fmt.Printf("Username: ")
+	fmt.Scanln(&username)
+
+	fmt.Printf("Password: ")
+	fmt.Scanln(&password)
+
+	fmt.Printf("Database: ")
+	fmt.Scanln(&database)
+
+	config.loadConfig()
+	config.Username = username
+	config.Password = password
+	config.Database = database
+
+	configFile, err := os.OpenFile(configFilePath, os.O_WRONLY, 0644)
+	if err != nil {
+		log.Panic(err)
+	}
+	defer configFile.Close()
+
+	configFile.Truncate(0)
+	configJson, err := json.Marshal(config)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	_, err = configFile.Write(configJson)
+	if err != nil {
+		log.Panic(err)
+	}
 }
 
 func (c *Config) getDriver() string {

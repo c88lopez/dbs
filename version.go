@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"log"
 	"os"
@@ -38,7 +39,7 @@ func generateInitFolder() {
 		newFilePaths := [1]string{"/config"}
 
 		for _, newFilePath := range newFilePaths {
-			err = ioutil.WriteFile(mainFolderPath+newFilePath, []byte{}, 0775)
+			err = ioutil.WriteFile(mainFolderPath+newFilePath, getConfigTemplate(), 0644)
 			if err != nil {
 				log.Panic(err)
 			}
@@ -48,4 +49,20 @@ func generateInitFolder() {
 	} else {
 		color.Yellow("Already initialized!.\n")
 	}
+}
+
+func getConfigTemplate() []byte {
+	baseConfig := Config{
+		Driver:   "mysql",
+		Username: "root",
+		Password: "root",
+		Database: "test",
+	}
+
+	json, err := json.Marshal(baseConfig)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	return json
 }

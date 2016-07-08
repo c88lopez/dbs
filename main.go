@@ -32,9 +32,8 @@ func main() {
 		case "init":
 			generateInitFolder()
 			break
-		case "generate-config-file":
-			setConfigFilePath()
-			generateConfigFile()
+		case "config":
+			setDatabaseConfigInteractively()
 			break
 		case "build-schema-state":
 			setConfigFilePath()
@@ -50,7 +49,7 @@ func main() {
 		}
 	}
 
-	fmt.Printf("Elapsed time: %s\n", time.Since(start))
+	fmt.Printf("\nElapsed time: %s\n", time.Since(start))
 }
 
 func displayHeader() {
