@@ -66,3 +66,7 @@ func getConfigTemplate() []byte {
 
 	return json
 }
+
+func getStatesDirPath() string {
+	return mainFolderPath+"/states"
+}

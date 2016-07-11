@@ -9,7 +9,8 @@ func showHelp() {
 	helpDescription += "Commands:\n"
 	helpDescription += "\n"
 	helpDescription += "init\t\t\tInitialize.\n"
-	helpDescription += "generate-config-file\tCreates the config file.\n"
+	helpDescription += "config\t\t\tConfigure the database connection.\n"
+	helpDescription += "build-schema-state\tBuild and persist the current database state.\n"
 	helpDescription += "\n"
 
 	fmt.Printf("%s", helpDescription)

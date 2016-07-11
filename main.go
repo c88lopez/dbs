@@ -93,18 +93,36 @@ func buildSchemaState() *Schema {
 }
 
 func generateJsonSchemaState(s *Schema) {
-	fmt.Print("Generating json... ")
+	fmt.Print("Generating json and json hash... ")
 
 	schemaJson, err := json.Marshal(s)
 	if err != nil {
 		log.Panic(err)
 	}
 
-	hasher := sha1.New()
-	hasher.Write([]byte(string(schemaJson)))
-	bs := hasher.Sum(nil)
+	jsonHash := generateJsonSchemaStateHash(schemaJson)
 
-	fmt.Printf("Json hash: %x\n", bs)
+	statesDirPath := getStatesDirPath()
+	jsonFilePath := statesDirPath + "/" + jsonHash
+	jsonFile, err := os.Create(jsonFilePath)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	_, err = jsonFile.Write(schemaJson)
+	if err != nil {
+		log.Panic(err)
+	}
 
 	color.Green("Done.\n")
+}
+
+func generateJsonSchemaStateHash(schemaJson []byte) string {
+	hasher := sha1.New()
+	_, err := hasher.Write(schemaJson)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	return string(hasher.Sum(nil))
 }
