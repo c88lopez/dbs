@@ -4,7 +4,7 @@ import "fmt"
 
 func showHelp() {
 	var helpDescription string
-	helpDescription += "Usage: dbs COMMAND [FLAGS]\n"
+	helpDescription += "Usage: dbs <command> [<arg>, ...]\n"
 	helpDescription += "\n"
 	helpDescription += "Commands:\n"
 	helpDescription += "\n"

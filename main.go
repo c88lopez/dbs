@@ -49,12 +49,11 @@ func main() {
 		}
 	}
 
-	fmt.Printf("\nElapsed time: %s\n", time.Since(start))
+	fmt.Printf("Elapsed time: %s\n", time.Since(start))
 }
 
 func displayHeader() {
-	fmt.Printf("** Welcome to DBS **\n")
-	fmt.Printf("Version 0.0.1\n\n")
+
 }
 
 func loadConfiguration() {

@@ -30,13 +30,13 @@ func generateInitFolder() {
 
 	setMainFolderPath()
 	if _, err := os.Stat(mainFolderPath); os.IsNotExist(err) {
-		newDirPaths := [2]string{"/states", "/history"}
+		newDirPaths := [1]string{"/states"}
 
 		for _, newDirPath := range newDirPaths {
 			os.MkdirAll(mainFolderPath+newDirPath, 0775)
 		}
 
-		newFilePaths := [1]string{"/config"}
+		newFilePaths := [2]string{"/config", "/states/history"}
 
 		for _, newFilePath := range newFilePaths {
 			err = ioutil.WriteFile(mainFolderPath+newFilePath, getConfigTemplate(), 0644)
