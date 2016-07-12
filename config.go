@@ -66,7 +66,7 @@ func setDatabaseConfigInteractively() {
 	config.Password = password
 	config.Database = database
 
-	configFile, err := os.OpenFile(configFilePath, os.O_WRONLY, 0644)
+	configFile, err := os.OpenFile(configFilePath, os.O_WRONLY, 0600)
 	if err != nil {
 		log.Panic(err)
 	}

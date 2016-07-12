@@ -36,7 +36,7 @@ func generateInitFolder() {
 			os.MkdirAll(mainFolderPath+newDirPath, 0775)
 		}
 
-		err = ioutil.WriteFile(mainFolderPath+"/config", getConfigTemplate(), 0644)
+		err = ioutil.WriteFile(mainFolderPath+"/config", getConfigTemplate(), 0600)
 		if err != nil {
 			log.Panic(err)
 		}
