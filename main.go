@@ -1,12 +1,11 @@
 package main
 
 import (
+	"crypto/sha1"
 	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
-
-	"crypto/sha1"
 
 	"time"
 
@@ -95,34 +94,42 @@ func buildSchemaState() *Schema {
 func generateJsonSchemaState(s *Schema) {
 	fmt.Print("Generating json and json hash... ")
 
+	var err error
+
 	schemaJson, err := json.Marshal(s)
 	if err != nil {
 		log.Panic(err)
 	}
 
-	jsonHash := generateJsonSchemaStateHash(schemaJson)
+	jsonHash := sha1.Sum(schemaJson)
+
+	fmt.Sprintf("%x", jsonHash)
 
 	statesDirPath := getStatesDirPath()
-	jsonFilePath := statesDirPath + "/" + jsonHash
-	jsonFile, err := os.Create(jsonFilePath)
-	if err != nil {
-		log.Panic(err)
+	jsonFilePath := fmt.Sprintf("%v/%x", statesDirPath, jsonHash)
+
+	_, err = os.OpenFile(jsonFilePath, os.O_RDONLY, 0644)
+	if os.IsNotExist(err) {
+		jsonFile, err := os.Create(jsonFilePath)
+		if err != nil {
+			log.Panic(err)
+		}
+
+		_, err = jsonFile.Write(schemaJson)
+		if err != nil {
+			log.Panic(err)
+		}
+
+		historyFilePath := fmt.Sprintf("%v/%v", statesDirPath, "history")
+		historyFile, err := os.OpenFile(historyFilePath, os.O_APPEND|os.O_WRONLY, 0644)
+		if err != nil {
+			log.Panic(err)
+		}
+
+		historyFile.WriteString(fmt.Sprintf("%x\n", jsonHash))
+
+		color.Green("Done.\n")
+	} else {
+		color.Yellow("No database changes detected!\n")
 	}
-
-	_, err = jsonFile.Write(schemaJson)
-	if err != nil {
-		log.Panic(err)
-	}
-
-	color.Green("Done.\n")
-}
-
-func generateJsonSchemaStateHash(schemaJson []byte) string {
-	hasher := sha1.New()
-	_, err := hasher.Write(schemaJson)
-	if err != nil {
-		log.Panic(err)
-	}
-
-	return string(hasher.Sum(nil))
 }

@@ -36,13 +36,14 @@ func generateInitFolder() {
 			os.MkdirAll(mainFolderPath+newDirPath, 0775)
 		}
 
-		newFilePaths := [2]string{"/config", "/states/history"}
+		err = ioutil.WriteFile(mainFolderPath+"/config", getConfigTemplate(), 0644)
+		if err != nil {
+			log.Panic(err)
+		}
 
-		for _, newFilePath := range newFilePaths {
-			err = ioutil.WriteFile(mainFolderPath+newFilePath, getConfigTemplate(), 0644)
-			if err != nil {
-				log.Panic(err)
-			}
+		err = ioutil.WriteFile(mainFolderPath+"/states/history", []byte{}, 0644)
+		if err != nil {
+			log.Panic(err)
 		}
 
 		color.Green("Done.\n")
@@ -68,5 +69,6 @@ func getConfigTemplate() []byte {
 }
 
 func getStatesDirPath() string {
-	return mainFolderPath+"/states"
+	setMainFolderPath()
+	return mainFolderPath + "/states"
 }
