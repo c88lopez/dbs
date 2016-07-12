@@ -108,8 +108,7 @@ func generateJsonSchemaState(s *Schema) {
 	statesDirPath := getStatesDirPath()
 	jsonFilePath := fmt.Sprintf("%v/%x", statesDirPath, jsonHash)
 
-	_, err = os.OpenFile(jsonFilePath, os.O_RDONLY, 0644)
-	if os.IsNotExist(err) {
+	if _, err = os.Stat(jsonFilePath); os.IsNotExist(err) {
 		jsonFile, err := os.Create(jsonFilePath)
 		if err != nil {
 			log.Panic(err)
@@ -121,7 +120,7 @@ func generateJsonSchemaState(s *Schema) {
 		}
 
 		historyFilePath := fmt.Sprintf("%v/%v", statesDirPath, "history")
-		historyFile, err := os.OpenFile(historyFilePath, os.O_APPEND|os.O_WRONLY, 0644)
+		historyFile, err := os.OpenFile(historyFilePath, os.O_WRONLY|os.O_APPEND, 0644)
 		if err != nil {
 			log.Panic(err)
 		}
