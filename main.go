@@ -113,6 +113,7 @@ func generateJsonSchemaState(s *Schema) {
 		if err != nil {
 			log.Panic(err)
 		}
+		defer jsonFile.Close()
 
 		_, err = jsonFile.Write(schemaJson)
 		if err != nil {
@@ -124,6 +125,7 @@ func generateJsonSchemaState(s *Schema) {
 		if err != nil {
 			log.Panic(err)
 		}
+		defer historyFile.Close()
 
 		historyFile.WriteString(fmt.Sprintf("%x\n", jsonHash))
 
