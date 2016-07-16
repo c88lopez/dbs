@@ -83,19 +83,3 @@ func setDatabaseConfigInteractively() {
 		log.Panic(err)
 	}
 }
-
-func (c *Config) getDriver() string {
-	return c.Driver
-}
-
-func (c *Config) getUsername() string {
-	return c.Username
-}
-
-func (c *Config) getPassword() string {
-	return c.Password
-}
-
-func (c *Config) getDatabase() string {
-	return c.Database
-}

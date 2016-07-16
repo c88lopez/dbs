@@ -69,9 +69,9 @@ func startConnectionPool() {
 	var dsn string
 	var err error
 
-	dsn = config.getUsername() + ":" + config.getPassword() + "@/" + config.getDatabase()
+	dsn = config.Username + ":" + config.Password + "@/" + config.Database
 
-	dbConnPool, err = sql.Open(config.getDriver(), dsn)
+	dbConnPool, err = sql.Open(config.Driver, dsn)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -83,7 +83,7 @@ func buildSchemaState() *Schema {
 	fmt.Print("Building schema state... ")
 	schema := new(Schema)
 
-	schema.SetName(config.getDatabase())
+	schema.SetName(config.Database)
 	schema.LoadInformationSchema().FetchTables()
 
 	color.Green("Done.\n")
