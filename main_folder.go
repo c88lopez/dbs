@@ -13,7 +13,7 @@ import (
 
 var mainFolderPath string
 
-type Version struct {
+type DbsFolder struct {
 }
 
 func setMainFolderPath() {
@@ -55,9 +55,9 @@ func generateInitFolder() {
 func getConfigTemplate() []byte {
 	baseConfig := Config{
 		Driver:   "mysql",
-		Username: "root",
-		Password: "root",
-		Database: "test",
+		Username: "dummy",
+		Password: "dummy",
+		Database: "dummy",
 	}
 
 	json, err := json.Marshal(baseConfig)

@@ -34,7 +34,7 @@ func main() {
 		case "config":
 			setDatabaseConfigInteractively()
 			break
-		case "build-schema-state":
+		case "generate":
 			setConfigFilePath()
 			loadConfiguration()
 
@@ -43,7 +43,6 @@ func main() {
 			generateJsonSchemaState(s)
 
 			dbConnPool.Close()
-
 			break
 		}
 	}
