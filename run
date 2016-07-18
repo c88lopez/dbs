@@ -1,6 +1,7 @@
 #! /bin/bash
 
 # Adding files to the run
+# This seems to not be useful
 
 go run \
 main.go \
