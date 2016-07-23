@@ -30,12 +30,7 @@ func (s *Schema) GetTables() []Table {
 
 // LoadInformationSchema func
 func (s *Schema) LoadInformationSchema() *Schema {
-	query := `
-	SELECT DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME
-	FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '
-`
-
-	rows, err := dbConnPool.Query(query + s.Name + "'")
+	rows, err := dbConnPool.Query("SELECT DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '" + s.Name + "'")
 	if err != nil {
 		panic(err)
 	}
