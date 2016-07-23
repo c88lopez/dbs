@@ -1,10 +1,5 @@
 package main
 
-import (
-	"database/sql"
-	"log"
-)
-
 // Schema struct
 type Schema struct {
 	Name          string `json:"name"`
@@ -13,47 +8,6 @@ type Schema struct {
 
 	TableCount int     `json:"tableCount"`
 	Tables     []Table `json:"tables"`
-}
-
-// GetConn func
-func (s *Schema) GetConn() *sql.DB {
-	return dbConnPool
-}
-
-// SetName func
-func (s *Schema) SetName(name string) *Schema {
-	s.Name = name
-
-	return s
-}
-
-// GetName func
-func (s *Schema) GetName() string {
-	return s.Name
-}
-
-// SetCharsetName func
-func (s *Schema) SetCharsetName(charsetName string) *Schema {
-	s.CharsetName = charsetName
-
-	return s
-}
-
-// GetCharsetName func
-func (s *Schema) GetCharsetName() string {
-	return s.CharsetName
-}
-
-// SetCollationName func
-func (s *Schema) SetCollationName(collationName string) *Schema {
-	s.CollationName = collationName
-
-	return s
-}
-
-// GetCollationName func
-func (s *Schema) GetCollationName() string {
-	return s.CollationName
 }
 
 // LoadTables func
@@ -76,9 +30,14 @@ func (s *Schema) GetTables() []Table {
 
 // LoadInformationSchema func
 func (s *Schema) LoadInformationSchema() *Schema {
-	rows, err := s.GetConn().Query("SELECT DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '" + s.GetName() + "'")
+	query := `
+	SELECT DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME
+	FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '
+`
+
+	rows, err := dbConnPool.Query(query + s.Name + "'")
 	if err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 	defer rows.Close()
 
@@ -87,7 +46,8 @@ func (s *Schema) LoadInformationSchema() *Schema {
 	var charset, collation string
 	rows.Scan(&charset, &collation)
 
-	s.SetCharsetName(charset).SetCollationName(collation)
+	s.CharsetName = charset
+	s.CollationName = collation
 
 	return s
 }
@@ -96,10 +56,10 @@ func (s *Schema) LoadInformationSchema() *Schema {
 func (s *Schema) FetchTables() int {
 	s.TableCount = 0
 
-	rows, err := s.GetConn().Query("SHOW TABLES")
+	rows, err := dbConnPool.Query("SHOW TABLES")
 
 	if err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 	defer rows.Close()
 
@@ -108,7 +68,7 @@ func (s *Schema) FetchTables() int {
 
 		err = rows.Scan(&table.Name)
 		if err != nil {
-			log.Panic(err)
+			panic(err)
 		}
 
 		table.FetchColumns()

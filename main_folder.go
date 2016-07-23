@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"os"
 
 	"fmt"
@@ -19,7 +18,7 @@ type DbsFolder struct {
 func setMainFolderPath() {
 	dir, err := os.Getwd()
 	if err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 
 	mainFolderPath = dir + "/.dbs"
@@ -38,12 +37,12 @@ func generateInitFolder() {
 
 		err = ioutil.WriteFile(mainFolderPath+"/config", getConfigTemplate(), 0600)
 		if err != nil {
-			log.Panic(err)
+			panic(err)
 		}
 
 		err = ioutil.WriteFile(mainFolderPath+"/states/history", []byte{}, 0644)
 		if err != nil {
-			log.Panic(err)
+			panic(err)
 		}
 
 		color.Green("Done.\n")
@@ -62,7 +61,7 @@ func getConfigTemplate() []byte {
 
 	json, err := json.Marshal(baseConfig)
 	if err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 
 	return json

@@ -1,9 +1,6 @@
 package main
 
-import (
-	"database/sql"
-	"log"
-)
+import "database/sql"
 
 // Table struct
 type Table struct {
@@ -15,23 +12,6 @@ type Table struct {
 	DefaultCharset string `json:"defaultCharset"`
 }
 
-// GetConn func
-func (t *Table) GetConn() *sql.DB {
-	return dbConnPool
-}
-
-// SetName func
-func (t *Table) SetName(name string) *Table {
-	t.Name = name
-
-	return t
-}
-
-// GetName func
-func (t *Table) GetName() string {
-	return t.Name
-}
-
 // AddColumn func
 func (t *Table) AddColumn(c Column) *Table {
 	t.Columns = append(t.Columns, c)
@@ -41,12 +21,12 @@ func (t *Table) AddColumn(c Column) *Table {
 
 // FetchColumns func
 func (t *Table) FetchColumns() *Table {
-	query := "DESCRIBE " + t.GetName()
+	query := "DESCRIBE " + t.Name
 
 	var result *sql.Rows
-	result, err := t.GetConn().Query(query)
+	result, err := dbConnPool.Query(query)
 	if err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 
 	for result.Next() {

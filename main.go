@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"log"
 
 	"time"
 
@@ -72,7 +71,7 @@ func startConnectionPool() {
 
 	dbConnPool, err = sql.Open(config.Driver, dsn)
 	if err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 
 	color.Green("Done.\n")
@@ -82,7 +81,7 @@ func buildSchemaState() *Schema {
 	fmt.Print("Building schema state... ")
 	schema := new(Schema)
 
-	schema.SetName(config.Database)
+	schema.Name = config.Database
 	schema.LoadInformationSchema().FetchTables()
 
 	color.Green("Done.\n")
@@ -97,7 +96,7 @@ func generateJsonSchemaState(s *Schema) {
 
 	schemaJson, err := json.Marshal(s)
 	if err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 
 	jsonHash := sha1.Sum(schemaJson)
@@ -110,19 +109,19 @@ func generateJsonSchemaState(s *Schema) {
 	if _, err = os.Stat(jsonFilePath); os.IsNotExist(err) {
 		jsonFile, err := os.Create(jsonFilePath)
 		if err != nil {
-			log.Panic(err)
+			panic(err)
 		}
 		defer jsonFile.Close()
 
 		_, err = jsonFile.Write(schemaJson)
 		if err != nil {
-			log.Panic(err)
+			panic(err)
 		}
 
 		historyFilePath := fmt.Sprintf("%v/%v", statesDirPath, "history")
 		historyFile, err := os.OpenFile(historyFilePath, os.O_WRONLY|os.O_APPEND, 0644)
 		if err != nil {
-			log.Panic(err)
+			panic(err)
 		}
 		defer historyFile.Close()
 

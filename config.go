@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 )
 
@@ -19,10 +18,9 @@ type Config struct {
 }
 
 func setConfigFilePath() {
-
 	dir, err := os.Getwd()
 	if err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 
 	configFilePath = dir + "/.dbs/config"
@@ -33,7 +31,7 @@ func (c *Config) loadConfig() *Config {
 
 	configFile, err := os.Open(configFilePath)
 	if err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 	defer configFile.Close()
 
@@ -41,7 +39,7 @@ func (c *Config) loadConfig() *Config {
 
 	err = decoder.Decode(&c)
 	if err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 
 	return c
@@ -68,18 +66,18 @@ func setDatabaseConfigInteractively() {
 
 	configFile, err := os.OpenFile(configFilePath, os.O_WRONLY, 0600)
 	if err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 	defer configFile.Close()
 
 	configFile.Truncate(0)
 	configJson, err := json.Marshal(config)
 	if err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 
 	_, err = configFile.Write(configJson)
 	if err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 }
