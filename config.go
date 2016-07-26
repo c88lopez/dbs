@@ -46,23 +46,28 @@ func (c *Config) loadConfig() *Config {
 }
 
 func setDatabaseConfigInteractively() {
-	fmt.Printf("Configuring database parameters...\n")
+	fmt.Print("Configuring database parameters...\n")
 
 	var username, password, database string
 
-	fmt.Printf("Username: ")
+	fmt.Print("Username: ")
 	fmt.Scanln(&username)
 
-	fmt.Printf("Password: ")
+	fmt.Print("Password: ")
 	fmt.Scanln(&password)
 
-	fmt.Printf("Database: ")
+	fmt.Print("Database: ")
 	fmt.Scanln(&database)
 
-	config.loadConfig()
 	config.Username = username
 	config.Password = password
 	config.Database = database
+
+	saveConfig(config)
+}
+
+func saveConfig(c Config) {
+	setConfigFilePath()
 
 	configFile, err := os.OpenFile(configFilePath, os.O_WRONLY, 0600)
 	if err != nil {

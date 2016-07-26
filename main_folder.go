@@ -25,7 +25,7 @@ func setMainFolderPath() {
 }
 
 func generateInitFolder() {
-	fmt.Printf("Initializing... ")
+	fmt.Print("Initializing... ")
 
 	setMainFolderPath()
 	if _, err := os.Stat(mainFolderPath); os.IsNotExist(err) {

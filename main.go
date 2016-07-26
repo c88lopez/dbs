@@ -54,7 +54,7 @@ func displayHeader() {
 }
 
 func loadConfiguration() {
-	fmt.Printf("Loading configuration... ")
+	fmt.Print("Loading configuration... ")
 
 	config.loadConfig()
 
@@ -62,7 +62,7 @@ func loadConfiguration() {
 }
 
 func startConnectionPool() {
-	fmt.Printf("Initializing connection pool... ")
+	fmt.Print("Initializing connection pool... ")
 
 	var dsn string
 	var err error
