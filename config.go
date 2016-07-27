@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+
+	"github.com/howeyc/gopass"
 )
 
 var configFilePath string
@@ -26,7 +28,7 @@ func setConfigFilePath() {
 	configFilePath = dir + "/.dbs/config"
 }
 
-func (c *Config) loadConfig() *Config {
+func (c *Config) loadConfig() {
 	setConfigFilePath()
 
 	configFile, err := os.Open(configFilePath)
@@ -41,32 +43,34 @@ func (c *Config) loadConfig() *Config {
 	if err != nil {
 		panic(err)
 	}
-
-	return c
 }
 
 func setDatabaseConfigInteractively() {
 	fmt.Print("Configuring database parameters...\n")
 
-	var username, password, database string
+	var username, database string
 
 	fmt.Print("Username: ")
 	fmt.Scanln(&username)
 
 	fmt.Print("Password: ")
-	fmt.Scanln(&password)
+	gopass.GetPasswdMasked()
+	password, _ := gopass.GetPasswd()
 
 	fmt.Print("Database: ")
 	fmt.Scanln(&database)
 
+	var config Config
+	config.loadConfig()
+
 	config.Username = username
-	config.Password = password
+	config.Password = string(password)
 	config.Database = database
 
 	saveConfig(config)
 }
 
-func saveConfig(c Config) {
+func saveConfig(config Config) {
 	setConfigFilePath()
 
 	configFile, err := os.OpenFile(configFilePath, os.O_WRONLY, 0600)
