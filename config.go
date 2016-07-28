@@ -22,9 +22,7 @@ type Config struct {
 
 func setConfigFilePath() {
 	dir, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 
 	configFilePath = dir + "/.dbs/config"
 }
@@ -33,17 +31,12 @@ func (c *Config) loadConfig() {
 	setConfigFilePath()
 
 	configFile, err := os.Open(configFilePath)
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 	defer configFile.Close()
 
 	decoder := json.NewDecoder(configFile)
 
-	err = decoder.Decode(&c)
-	if err != nil {
-		panic(err)
-	}
+	check(decoder.Decode(&c))
 }
 
 func setDatabaseConfigInteractively() {
@@ -57,9 +50,7 @@ func setDatabaseConfigInteractively() {
 	fmt.Print("Password: ")
 
 	bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 
 	password := string(bytePassword)
 
@@ -80,19 +71,13 @@ func saveConfig(config Config) {
 	setConfigFilePath()
 
 	configFile, err := os.OpenFile(configFilePath, os.O_WRONLY, 0600)
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 	defer configFile.Close()
 
 	configFile.Truncate(0)
 	configJson, err := json.Marshal(config)
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 
 	_, err = configFile.Write(configJson)
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 }

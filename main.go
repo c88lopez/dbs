@@ -68,9 +68,7 @@ func startConnectionPool() {
 	dsn = config.Username + ":" + config.Password + "@/" + config.Database
 
 	dbConnPool, err = sql.Open(config.Driver, dsn)
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 
 	color.Green("Done.\n")
 }
@@ -93,9 +91,7 @@ func generateJsonSchemaState(s *Schema) {
 	var err error
 
 	schemaJson, err := json.Marshal(s)
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 
 	jsonHash := sha1.Sum(schemaJson)
 
@@ -105,20 +101,14 @@ func generateJsonSchemaState(s *Schema) {
 	historyFilePath := fmt.Sprintf("%v/%v", statesDirPath, "history")
 	if _, err = os.Stat(jsonFilePath); os.IsNotExist(err) {
 		jsonFile, err := os.Create(jsonFilePath)
-		if err != nil {
-			panic(err)
-		}
+		check(err)
 		defer jsonFile.Close()
 
 		_, err = jsonFile.Write(schemaJson)
-		if err != nil {
-			panic(err)
-		}
+		check(err)
 
 		historyFile, err := os.OpenFile(historyFilePath, os.O_WRONLY|os.O_APPEND, 0644)
-		if err != nil {
-			panic(err)
-		}
+		check(err)
 		defer historyFile.Close()
 
 		historyFile.WriteString(fmt.Sprintf("%x\n", jsonHash))
@@ -126,9 +116,7 @@ func generateJsonSchemaState(s *Schema) {
 		color.Green("Done.\n")
 	} else {
 		historyFile, err := os.Open(historyFilePath)
-		if err != nil {
-			panic(err)
-		}
+		check(err)
 		defer historyFile.Close()
 
 		last := false
@@ -148,14 +136,18 @@ func generateJsonSchemaState(s *Schema) {
 			historyFile.Close()
 
 			historyFile, err := os.OpenFile(historyFilePath, os.O_WRONLY|os.O_APPEND, 0644)
-			if err != nil {
-				panic(err)
-			}
+			check(err)
 			defer historyFile.Close()
 
 			historyFile.WriteString(fmt.Sprintf("%x\n", jsonHash))
 
 			color.Green("Done.\n")
 		}
+	}
+}
+
+func check(e error) {
+	if e != nil {
+		panic(e)
 	}
 }

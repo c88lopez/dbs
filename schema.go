@@ -31,9 +31,7 @@ func (s *Schema) GetTables() []Table {
 // LoadInformationSchema func
 func (s *Schema) LoadInformationSchema() *Schema {
 	rows, err := dbConnPool.Query("SELECT DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '" + s.Name + "'")
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 	defer rows.Close()
 
 	rows.Next()
@@ -52,19 +50,13 @@ func (s *Schema) FetchTables() int {
 	s.TableCount = 0
 
 	rows, err := dbConnPool.Query("SHOW TABLES")
-
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 	defer rows.Close()
 
 	for rows.Next() {
 		var table Table
 
-		err = rows.Scan(&table.Name)
-		if err != nil {
-			panic(err)
-		}
+		check(rows.Scan(&table.Name))
 
 		table.FetchColumns()
 

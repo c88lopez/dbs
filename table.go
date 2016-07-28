@@ -25,9 +25,7 @@ func (t *Table) FetchColumns() *Table {
 
 	var result *sql.Rows
 	result, err := dbConnPool.Query(query)
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 
 	for result.Next() {
 		var column Column

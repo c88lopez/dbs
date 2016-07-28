@@ -17,9 +17,7 @@ type DbsFolder struct {
 
 func setMainFolderPath() {
 	dir, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 
 	mainFolderPath = dir + "/.dbs"
 }
@@ -35,15 +33,8 @@ func generateInitFolder() {
 			os.MkdirAll(mainFolderPath+newDirPath, 0775)
 		}
 
-		err = ioutil.WriteFile(mainFolderPath+"/config", getConfigTemplate(), 0600)
-		if err != nil {
-			panic(err)
-		}
-
-		err = ioutil.WriteFile(mainFolderPath+"/states/history", []byte{}, 0644)
-		if err != nil {
-			panic(err)
-		}
+		check(ioutil.WriteFile(mainFolderPath+"/config", getConfigTemplate(), 0600))
+		check(ioutil.WriteFile(mainFolderPath+"/states/history", []byte{}, 0644))
 
 		color.Green("Done.\n")
 	} else {
@@ -60,9 +51,7 @@ func getConfigTemplate() []byte {
 	}
 
 	json, err := json.Marshal(baseConfig)
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 
 	return json
 }
