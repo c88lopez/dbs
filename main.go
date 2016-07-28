@@ -116,7 +116,7 @@ func generateJsonSchemaState(s *Schema) {
 		_, err = jsonFile.Write(schemaJson)
 		if err != nil {
 			panic(err)
-			}
+		}
 
 		historyFilePath := fmt.Sprintf("%v/%v", statesDirPath, "history")
 		historyFile, err := os.OpenFile(historyFilePath, os.O_WRONLY|os.O_APPEND, 0644)

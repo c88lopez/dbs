@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"syscall"
 
-	"github.com/howeyc/gopass"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 var configFilePath string
@@ -54,10 +55,15 @@ func setDatabaseConfigInteractively() {
 	fmt.Scanln(&username)
 
 	fmt.Print("Password: ")
-	gopass.GetPasswdMasked()
-	password, _ := gopass.GetPasswd()
 
-	fmt.Print("Database: ")
+	bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
+	if err != nil {
+		panic(err)
+	}
+
+	password := string(bytePassword)
+
+	fmt.Print("\nDatabase: ")
 	fmt.Scanln(&database)
 
 	var config Config
