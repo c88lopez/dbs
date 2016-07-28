@@ -10,6 +10,10 @@ import (
 
 	"os"
 
+	"bufio"
+
+	"bytes"
+
 	"github.com/fatih/color"
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -18,8 +22,6 @@ var dbConnPool *sql.DB
 
 func main() {
 	start := time.Now()
-
-	displayHeader()
 
 	if len(os.Args) == 1 {
 		showHelp()
@@ -46,11 +48,7 @@ func main() {
 		}
 	}
 
-	fmt.Printf("Elapsed time: %s\n", time.Since(start))
-}
-
-func displayHeader() {
-
+	fmt.Printf("\nElapsed time: %s\n", time.Since(start))
 }
 
 func loadConfiguration() {
@@ -101,11 +99,10 @@ func generateJsonSchemaState(s *Schema) {
 
 	jsonHash := sha1.Sum(schemaJson)
 
-	fmt.Sprintf("%x", jsonHash)
-
 	statesDirPath := getStatesDirPath()
 	jsonFilePath := fmt.Sprintf("%v/%x", statesDirPath, jsonHash)
 
+	historyFilePath := fmt.Sprintf("%v/%v", statesDirPath, "history")
 	if _, err = os.Stat(jsonFilePath); os.IsNotExist(err) {
 		jsonFile, err := os.Create(jsonFilePath)
 		if err != nil {
@@ -118,7 +115,6 @@ func generateJsonSchemaState(s *Schema) {
 			panic(err)
 		}
 
-		historyFilePath := fmt.Sprintf("%v/%v", statesDirPath, "history")
 		historyFile, err := os.OpenFile(historyFilePath, os.O_WRONLY|os.O_APPEND, 0644)
 		if err != nil {
 			panic(err)
@@ -129,6 +125,37 @@ func generateJsonSchemaState(s *Schema) {
 
 		color.Green("Done.\n")
 	} else {
-		color.Yellow("No database changes detected!\n")
+		historyFile, err := os.Open(historyFilePath)
+		if err != nil {
+			panic(err)
+		}
+		defer historyFile.Close()
+
+		last := false
+
+		scanner := bufio.NewScanner(historyFile)
+		for scanner.Scan() {
+			if bytes.Contains(scanner.Bytes(), []byte(fmt.Sprintf("%s", jsonHash))) {
+				last = true
+			} else {
+				last = false
+			}
+		}
+
+		if last {
+			color.Yellow("No database changes detected!\n")
+		} else {
+			historyFile.Close()
+
+			historyFile, err := os.OpenFile(historyFilePath, os.O_WRONLY|os.O_APPEND, 0644)
+			if err != nil {
+				panic(err)
+			}
+			defer historyFile.Close()
+
+			historyFile.WriteString(fmt.Sprintf("%x\n", jsonHash))
+
+			color.Green("Done.\n")
+		}
 	}
 }
