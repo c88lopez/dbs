@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"io/ioutil"
 	"os"
 
@@ -40,20 +39,6 @@ func generateInitFolder() {
 	} else {
 		color.Yellow("Already initialized!.\n")
 	}
-}
-
-func getConfigTemplate() []byte {
-	baseConfig := Config{
-		Driver:   "mysql",
-		Username: "dummy",
-		Password: "dummy",
-		Database: "dummy",
-	}
-
-	json, err := json.Marshal(baseConfig)
-	check(err)
-
-	return json
 }
 
 func getStatesDirPath() string {

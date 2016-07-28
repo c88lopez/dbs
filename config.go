@@ -27,6 +27,20 @@ func setConfigFilePath() {
 	configFilePath = dir + "/.dbs/config"
 }
 
+func getConfigTemplate() []byte {
+	baseConfig := Config{
+		Driver:   "mysql",
+		Username: "dummy",
+		Password: "dummy",
+		Database: "dummy",
+	}
+
+	json, err := json.Marshal(baseConfig)
+	check(err)
+
+	return json
+}
+
 func (c *Config) loadConfig() {
 	setConfigFilePath()
 
