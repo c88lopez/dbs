@@ -30,7 +30,7 @@ func main() {
 		default:
 			showHelp()
 		case "init":
-			generateInitFolder()
+			generateMainFolder()
 			break
 		case "config":
 			setDatabaseConfigInteractively()

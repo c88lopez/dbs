@@ -21,11 +21,12 @@ func setMainFolderPath() {
 	mainFolderPath = dir + "/.dbs"
 }
 
-func generateInitFolder() {
+func generateMainFolder() {
 	fmt.Print("Initializing... ")
 
 	setMainFolderPath()
-	if _, err := os.Stat(mainFolderPath); os.IsNotExist(err) {
+	_, err := os.Stat(mainFolderPath)
+	if os.IsNotExist(err) {
 		newDirPaths := [1]string{"/states"}
 
 		for _, newDirPath := range newDirPaths {

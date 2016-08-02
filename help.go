@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 func showHelp() {
-	fmt.Print(`Usage: dbs <command> [<arg>, ...]\n
+	fmt.Print(`Usage: dbs <command> [<arg>, ...]
 
 Commands:
 
