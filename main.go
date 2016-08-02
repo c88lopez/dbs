@@ -135,11 +135,18 @@ func generateJsonSchemaState(s *Schema) {
 		} else {
 			historyFile.Close()
 
-			historyFile, err := os.OpenFile(historyFilePath, os.O_WRONLY|os.O_APPEND, 0644)
+			historyFile, err := os.OpenFile(historyFilePath, os.O_WRONLY, 0644)
 			check(err)
 			defer historyFile.Close()
 
-			historyFile.WriteString(fmt.Sprintf("%x\n", jsonHash))
+			historyFile.WriteString(fmt.Sprintf("%x", jsonHash))
+
+			currentFilePath := fmt.Sprintf("%v/%v", statesDirPath, "current")
+			currentFile, err := os.OpenFile(currentFilePath, os.O_WRONLY, 0644)
+			check(err)
+			defer currentFile.Close()
+
+			currentFile.WriteString(fmt.Sprintf("%x", jsonHash))
 
 			color.Green("Done.\n")
 		}

@@ -11,9 +11,6 @@ import (
 
 var mainFolderPath string
 
-type DbsFolder struct {
-}
-
 func setMainFolderPath() {
 	dir, err := os.Getwd()
 	check(err)
@@ -35,6 +32,7 @@ func generateMainFolder() {
 
 		check(ioutil.WriteFile(mainFolderPath+"/config", getConfigTemplate(), 0600))
 		check(ioutil.WriteFile(mainFolderPath+"/states/history", []byte{}, 0644))
+		check(ioutil.WriteFile(mainFolderPath+"/states/current", []byte{}, 0644))
 
 		color.Green("Done.\n")
 	} else {
