@@ -15,6 +15,9 @@ var config = new(Config)
 // Config struct
 type Config struct {
 	Driver   string `json:"driver"`
+	Protocol string `json:"protocol"`
+	Host     string `json:"host"`
+	Port     string `json:"port"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Database string `json:"database"`
@@ -30,15 +33,18 @@ func setConfigFilePath() {
 func getConfigTemplate() []byte {
 	baseConfig := Config{
 		Driver:   "mysql",
+		Protocol: "tcp",
+		Host:     "localhost",
+		Port:     "3306",
 		Username: "dummy",
 		Password: "dummy",
 		Database: "dummy",
 	}
 
-	json, err := json.Marshal(baseConfig)
+	baseJson, err := json.Marshal(baseConfig)
 	check(err)
 
-	return json
+	return baseJson
 }
 
 func (c *Config) loadConfig() {
@@ -56,7 +62,16 @@ func (c *Config) loadConfig() {
 func setDatabaseConfigInteractively() {
 	fmt.Print("Configuring database parameters...\n")
 
-	var username, database string
+	var protocol, host, port, username, database string
+
+	fmt.Print("Protocol: ")
+	fmt.Scanln(&protocol)
+
+	fmt.Print("Host: ")
+	fmt.Scanln(&host)
+
+	fmt.Print("Port: ")
+	fmt.Scanln(&port)
 
 	fmt.Print("Username: ")
 	fmt.Scanln(&username)
@@ -74,6 +89,8 @@ func setDatabaseConfigInteractively() {
 	var config Config
 	config.loadConfig()
 
+	config.Host = host
+	config.Port = port
 	config.Username = username
 	config.Password = string(password)
 	config.Database = database

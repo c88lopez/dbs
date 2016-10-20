@@ -65,7 +65,7 @@ func startConnectionPool() {
 	var dsn string
 	var err error
 
-	dsn = config.Username + ":" + config.Password + "@/" + config.Database
+	dsn = config.Username + ":" + config.Password + "@" + config.Protocol + "(" + config.Host + ":" + config.Port + ")/" + config.Database
 
 	dbConnPool, err = sql.Open(config.Driver, dsn)
 	check(err)
