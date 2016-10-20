@@ -43,7 +43,7 @@ func main() {
 			s := buildSchemaState()
 			generateJsonSchemaState(s)
 
-			dbConnPool.Close()
+			closeConnectionPool()
 			break
 		}
 	}
@@ -71,6 +71,10 @@ func startConnectionPool() {
 	check(err)
 
 	color.Green("Done.\n")
+}
+
+func closeConnectionPool() {
+	dbConnPool.Close()
 }
 
 func buildSchemaState() *Schema {

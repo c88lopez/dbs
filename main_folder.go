@@ -36,7 +36,7 @@ func generateMainFolder() {
 
 		color.Green("Done.\n")
 	} else {
-		color.Yellow("Already initialized!.\n")
+		color.Yellow("Already initialized!\n")
 	}
 }
 
