@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"encoding/json"
@@ -10,7 +10,7 @@ import (
 )
 
 var configFilePath string
-var config = new(Config)
+var Parameters = new(Config)
 
 // Config struct
 type Config struct {
@@ -23,14 +23,18 @@ type Config struct {
 	Database string `json:"database"`
 }
 
-func setConfigFilePath() {
+func SetConfigFilePath() error {
 	dir, err := os.Getwd()
-	check(err)
+	if nil != err {
+		return err
+	}
 
 	configFilePath = dir + "/.dbs/config"
+
+	return err
 }
 
-func getConfigTemplate() []byte {
+func GetConfigTemplate() ([]byte, error) {
 	baseConfig := Config{
 		Driver:   "mysql",
 		Protocol: "tcp",
@@ -42,24 +46,34 @@ func getConfigTemplate() []byte {
 	}
 
 	baseJson, err := json.Marshal(baseConfig)
-	check(err)
+	if nil != err {
+		return []byte{}, err
+	}
 
-	return baseJson
+	return baseJson, nil
 }
 
-func (c *Config) loadConfig() {
-	setConfigFilePath()
+func LoadConfig() error {
+	SetConfigFilePath()
 
 	configFile, err := os.Open(configFilePath)
-	check(err)
+	if nil != err {
+		return err
+	}
+
 	defer configFile.Close()
 
 	decoder := json.NewDecoder(configFile)
 
-	check(decoder.Decode(&c))
+	err = decoder.Decode(&Parameters)
+	if nil != err {
+		return err
+	}
+
+	return nil
 }
 
-func setDatabaseConfigInteractively() {
+func SetDatabaseConfigInteractively() error {
 	fmt.Print("Configuring database parameters...\n")
 
 	var protocol, host, port, username, database string
@@ -79,36 +93,47 @@ func setDatabaseConfigInteractively() {
 	fmt.Print("Password: ")
 
 	bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
-	check(err)
+	if nil != err {
+		return err
+	}
 
 	password := string(bytePassword)
 
 	fmt.Print("\nDatabase: ")
 	fmt.Scanln(&database)
 
-	var config Config
-	config.loadConfig()
+	LoadConfig()
 
-	config.Host = host
-	config.Port = port
-	config.Username = username
-	config.Password = string(password)
-	config.Database = database
+	Parameters.Host = host
+	Parameters.Port = port
+	Parameters.Username = username
+	Parameters.Password = string(password)
+	Parameters.Database = database
 
-	saveConfig(config)
+	saveConfig(Parameters)
+
+	return nil
 }
 
-func saveConfig(config Config) {
-	setConfigFilePath()
+func saveConfig(parameters *Config) error {
+	SetConfigFilePath()
 
 	configFile, err := os.OpenFile(configFilePath, os.O_WRONLY, 0600)
-	check(err)
+	if nil != err {
+		return err
+	}
 	defer configFile.Close()
 
 	configFile.Truncate(0)
-	configJson, err := json.Marshal(config)
-	check(err)
+	configJson, err := json.Marshal(parameters)
+	if nil != err {
+		return err
+	}
 
 	_, err = configFile.Write(configJson)
-	check(err)
+	if nil != err {
+		return err
+	}
+
+	return nil
 }

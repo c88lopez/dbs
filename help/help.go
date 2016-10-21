@@ -1,8 +1,8 @@
-package main
+package help
 
 import "fmt"
 
-func showHelp() {
+func ShowHelp() {
 	fmt.Print(`Usage: dbs <command> [<arg>, ...]
 
 Commands:

@@ -1,4 +1,6 @@
-package main
+package entity
+
+import "database/sql"
 
 // Schema struct
 type Schema struct {
@@ -29,9 +31,11 @@ func (s *Schema) GetTables() []Table {
 }
 
 // LoadInformationSchema func
-func (s *Schema) LoadInformationSchema() *Schema {
-	rows, err := dbConnPool.Query("SELECT DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '" + s.Name + "'")
-	check(err)
+func (s *Schema) LoadInformationSchema(pool *sql.DB) error {
+	rows, err := pool.Query("SELECT DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '" + s.Name + "'")
+	if nil != err {
+		return err
+	}
 	defer rows.Close()
 
 	rows.Next()
@@ -42,26 +46,30 @@ func (s *Schema) LoadInformationSchema() *Schema {
 	s.CharsetName = charset
 	s.CollationName = collation
 
-	return s
+	return nil
 }
 
 // FetchTables func
-func (s *Schema) FetchTables() int {
+func (s *Schema) FetchTables(pool *sql.DB) (int, error) {
 	s.TableCount = 0
 
-	rows, err := dbConnPool.Query("SHOW TABLES")
-	check(err)
+	rows, err := pool.Query("SHOW TABLES")
+	if nil != err {
+		return -1, err
+	}
 	defer rows.Close()
 
 	for rows.Next() {
 		var table Table
 
-		check(rows.Scan(&table.Name))
+		if nil != rows.Scan(&table.Name) {
+			return -1, err
+		}
 
-		table.FetchColumns()
+		table.FetchColumns(pool)
 
 		s.AddTable(table)
 	}
 
-	return s.TableCount
+	return s.TableCount, nil
 }

@@ -1,4 +1,4 @@
-package main
+package entity
 
 import "database/sql"
 
@@ -20,12 +20,14 @@ func (t *Table) AddColumn(c Column) *Table {
 }
 
 // FetchColumns func
-func (t *Table) FetchColumns() *Table {
+func (t *Table) FetchColumns(pool *sql.DB) (*Table, error) {
 	query := "DESCRIBE " + t.Name
 
 	var result *sql.Rows
-	result, err := dbConnPool.Query(query)
-	check(err)
+	result, err := pool.Query(query)
+	if nil != err {
+		return nil, err
+	}
 
 	for result.Next() {
 		var column Column
@@ -40,5 +42,5 @@ func (t *Table) FetchColumns() *Table {
 		t.AddColumn(column)
 	}
 
-	return t
+	return t, nil
 }
