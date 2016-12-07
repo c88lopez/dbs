@@ -7,5 +7,7 @@ This is only the entry point of the application.
 The idea is to handle all the input on a separated component.
  */
 func main() {
-	command.Execute()
+	if err := command.Execute(); nil != err {
+		panic(err)
+	}
 }

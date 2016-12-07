@@ -1,10 +1,13 @@
 .PHONY: install
 install:
+	### Clear ###
 	rm -rf .dbs/
 	
-	rpl "~@DBS_VERSION@~" "$$(git rev-parse HEAD)" help/help.go
+	### Replace version before install ###
+	rpl -q "~@DBS_VERSION@~" "$$(git rev-parse HEAD)" help/help.go
 	go install
 	
+	### Revert changes ###
 	git checkout -- help/help.go
 clean:
 	rm -rf .dbs/

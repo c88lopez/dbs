@@ -28,7 +28,7 @@ func GenerateMainFolder() error {
 	SetMainFolderPath()
 	_, err := os.Stat(mainFolderPath)
 	if os.IsNotExist(err) {
-		newDirPaths := [1]string{"/states"}
+		newDirPaths := [2]string{"/states", "/logs"}
 
 		for _, newDirPath := range newDirPaths {
 			os.MkdirAll(mainFolderPath+newDirPath, 0775)
