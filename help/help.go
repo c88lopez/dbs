@@ -2,8 +2,18 @@ package help
 
 import "fmt"
 
+const Version = "~@DBS_VERSION@~"
+
+// Displays the version of dbs.
+func showVersion() {
+	fmt.Printf("Version: %s\n", Version)
+}
+
 func ShowHelp() {
-	fmt.Print(`Usage: dbs <command> [<arg>, ...]
+	showVersion()
+
+	fmt.Print(`
+Usage: dbs <command> [<arg>, ...]
 
 Commands:
 

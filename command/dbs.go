@@ -21,13 +21,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-const Version = "1.0.0"
-
-// Displays the version of dbs.
-func showVersion() {
-	fmt.Printf("%s\n", Version)
-}
-
 var DbConnPool *sql.DB
 
 // Executes the dbs.
