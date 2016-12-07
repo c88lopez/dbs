@@ -6,7 +6,7 @@ const Version = "~@DBS_VERSION@~"
 
 // Displays the version of dbs.
 func showVersion() {
-	fmt.Printf("Version: %s\n", Version)
+	fmt.Printf("Version %s\n", Version)
 }
 
 func ShowHelp() {
