@@ -197,11 +197,8 @@ func generateJsonSchemaState(s *entity.Schema) error {
 }
 
 func updateCurrent(statesDirPath string, jsonHash [20]byte) error {
-	currentStatePath := fmt.Sprintf("%v/%v", statesDirPath, jsonHash)
+	currentStatePath := fmt.Sprintf("%x", jsonHash)
 	currentFilePath := fmt.Sprintf("%v/%v", statesDirPath, "current")
-
-	fmt.Println(currentStatePath)
-	fmt.Println(currentFilePath)
 
 	err := os.Symlink(currentStatePath, currentFilePath)
 	if nil != err {

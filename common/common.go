@@ -49,11 +49,6 @@ func GenerateMainFolder() error {
 			return err
 		}
 
-		err = ioutil.WriteFile(mainFolderPath+"/states/current", []byte{}, 0644)
-		if nil != err {
-			return err
-		}
-
 		color.Green("Done.\n")
 	} else {
 		color.Yellow("Already initialized!\n")
