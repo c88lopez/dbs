@@ -164,7 +164,7 @@ func generateJsonSchemaState(s *entity.Schema) error {
 
 		scanner := bufio.NewScanner(historyFile)
 		for scanner.Scan() {
-			if bytes.Contains(scanner.Bytes(), []byte(fmt.Sprintf("%s", jsonHash))) {
+			if bytes.Contains(scanner.Bytes(), []byte(jsonHash[:])) {
 				last = true
 			} else {
 				last = false
@@ -206,4 +206,10 @@ func updateCurrent(statesDirPath string, jsonHash [20]byte) error {
 	}
 
 	return nil
+}
+
+func GetFileLastLine(historyFile *os.File) string {
+	fmt.Print(historyFile);
+
+	return "puto"
 }
