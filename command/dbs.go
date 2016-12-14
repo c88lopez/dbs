@@ -2,7 +2,6 @@ package command
 
 import (
 	"crypto/sha1"
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -16,12 +15,9 @@ import (
 	"github.com/c88lopez/dbs/entity"
 	"github.com/c88lopez/dbs/help"
 
-	"strings"
-
+	"github.com/c88lopez/dbs/handlers"
 	_ "github.com/go-sql-driver/mysql"
 )
-
-var DbConnPool *sql.DB
 
 // Executes the dbs.
 func Execute() error {
@@ -43,7 +39,7 @@ func Execute() error {
 			config.SetConfigFilePath()
 			loadConfiguration()
 
-			startConnectionPool()
+			handlers.StartConnectionPool()
 			s, err := buildSchemaState()
 			if nil != err {
 				return err
@@ -54,7 +50,7 @@ func Execute() error {
 				return err
 			}
 
-			closeConnectionPool()
+			handlers.CloseConnectionPool()
 			if nil != err {
 				return err
 			}
@@ -73,31 +69,6 @@ func loadConfiguration() {
 	config.LoadConfig()
 
 	color.Green("Done.\n")
-}
-
-func startConnectionPool() {
-	fmt.Print("Initializing connection pool... ")
-
-	openConnectionPool(
-		config.Parameters.Username + ":" + config.Parameters.Password + "@" + config.Parameters.Protocol + "(" +
-			config.Parameters.Host + ":" + config.Parameters.Port + ")/" + config.Parameters.Database)
-
-	color.Green("Done.\n")
-}
-
-func openConnectionPool(dsn string) error {
-	var err error
-
-	DbConnPool, err = sql.Open(config.Parameters.Driver, dsn)
-	if nil != err {
-		return err
-	}
-
-	return nil
-}
-
-func closeConnectionPool() error {
-	return DbConnPool.Close()
 }
 
 func buildSchemaState() (*entity.Schema, error) {
@@ -165,7 +136,7 @@ func generateJsonSchemaState(s *entity.Schema) error {
 		}
 		defer historyFile.Close()
 
-		if string(jsonHash[:]) != GetFileLastLine(historyFile) {
+		if string(jsonHash[:]) != handlers.GetLastState(historyFile) {
 			color.Yellow("No database changes detected!\n")
 		} else {
 			historyFile.Close()
@@ -204,18 +175,4 @@ func updateCurrent(statesDirPath string, jsonHash [20]byte) error {
 	}
 
 	return nil
-}
-
-func GetFileLastLine(historyFile *os.File) string {
-	var err error
-	lastLine := make([]byte, (sha1.Size*2)+1) // 40 chars (2 bytes each) + EOL ?
-
-	for {
-		_, err = historyFile.Read(lastLine)
-		if nil != err {
-			break
-		}
-	}
-
-	return strings.TrimSpace(string(lastLine))
 }
