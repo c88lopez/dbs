@@ -1,8 +1,6 @@
 package command
 
 import (
-	"bufio"
-	"bytes"
 	"crypto/sha1"
 	"database/sql"
 	"encoding/json"
@@ -17,6 +15,8 @@ import (
 	"github.com/c88lopez/dbs/config"
 	"github.com/c88lopez/dbs/entity"
 	"github.com/c88lopez/dbs/help"
+
+	"strings"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -129,9 +129,9 @@ func generateJsonSchemaState(s *entity.Schema) error {
 	jsonHash := sha1.Sum(schemaJson)
 
 	statesDirPath := common.GetStatesDirPath()
-	jsonFilePath := fmt.Sprintf("%v/%x", statesDirPath, jsonHash)
+	jsonFilePath := fmt.Sprintf("%v%c%x", statesDirPath, os.PathSeparator, jsonHash)
 
-	historyFilePath := fmt.Sprintf("%v/%v", statesDirPath, "history")
+	historyFilePath := fmt.Sprintf("%v%c%v", statesDirPath, os.PathSeparator, "history")
 	if _, err = os.Stat(jsonFilePath); os.IsNotExist(err) {
 		jsonFile, err := os.Create(jsonFilePath)
 		if nil != err {
@@ -152,6 +152,11 @@ func generateJsonSchemaState(s *entity.Schema) error {
 
 		historyFile.WriteString(fmt.Sprintf("%x\n", jsonHash))
 
+		err = updateCurrent(statesDirPath, jsonHash)
+		if nil != err {
+			return err
+		}
+
 		color.Green("Done.\n")
 	} else {
 		historyFile, err := os.Open(historyFilePath)
@@ -160,18 +165,7 @@ func generateJsonSchemaState(s *entity.Schema) error {
 		}
 		defer historyFile.Close()
 
-		last := false
-
-		scanner := bufio.NewScanner(historyFile)
-		for scanner.Scan() {
-			if bytes.Contains(scanner.Bytes(), []byte(jsonHash[:])) {
-				last = true
-			} else {
-				last = false
-			}
-		}
-
-		if last {
+		if string(jsonHash[:]) != GetFileLastLine(historyFile) {
 			color.Yellow("No database changes detected!\n")
 		} else {
 			historyFile.Close()
@@ -182,7 +176,7 @@ func generateJsonSchemaState(s *entity.Schema) error {
 			}
 			defer historyFile.Close()
 
-			historyFile.WriteString(fmt.Sprintf("%x", jsonHash))
+			historyFile.WriteString(fmt.Sprintf("%x\n", jsonHash))
 
 			err = updateCurrent(statesDirPath, jsonHash)
 			if nil != err {
@@ -198,7 +192,11 @@ func generateJsonSchemaState(s *entity.Schema) error {
 
 func updateCurrent(statesDirPath string, jsonHash [20]byte) error {
 	currentStatePath := fmt.Sprintf("%x", jsonHash)
-	currentFilePath := fmt.Sprintf("%v/%v", statesDirPath, "current")
+	currentFilePath := fmt.Sprintf("%s%c%s", statesDirPath, os.PathSeparator, "current")
+
+	if _, err := os.Stat(currentFilePath); !os.IsNotExist(err) {
+		os.Remove(currentFilePath)
+	}
 
 	err := os.Symlink(currentStatePath, currentFilePath)
 	if nil != err {
@@ -209,7 +207,15 @@ func updateCurrent(statesDirPath string, jsonHash [20]byte) error {
 }
 
 func GetFileLastLine(historyFile *os.File) string {
-	fmt.Print(historyFile);
+	var err error
+	lastLine := make([]byte, (sha1.Size*2)+1) // 40 chars (2 bytes each) + EOL ?
 
-	return "puto"
+	for {
+		_, err = historyFile.Read(lastLine)
+		if nil != err {
+			break
+		}
+	}
+
+	return strings.TrimSpace(string(lastLine))
 }
