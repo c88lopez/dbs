@@ -4,7 +4,7 @@ install:
 	rm -rf .dbs/
 	
 	### Replace version before install ###
-	rpl -q "~@DBS_VERSION@~" "$$(git rev-parse HEAD)" src/help/help.go
+	sed -i "s/~@DBS_VERSION@~/"$$(git rev-parse HEAD)"/g" src/help/help.go
 	go install
 	
 	### Revert changes ###
