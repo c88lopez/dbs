@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/c88lopez/dbs/command"
-	"github.com/c88lopez/dbs/handlers"
+	"github.com/c88lopez/dbs/src/command"
+	"github.com/c88lopez/dbs/src/handlers"
 )
 
 /**

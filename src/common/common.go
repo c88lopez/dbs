@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/c88lopez/dbs/config"
+	"github.com/c88lopez/dbs/src/config"
 	"github.com/fatih/color"
 )
 

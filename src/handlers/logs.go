@@ -10,7 +10,7 @@ type Log struct {
 }
 
 func (l Log) Write(level string, message string, context string) error {
-	var err error
+	//var err error
 
 	return nil
 }

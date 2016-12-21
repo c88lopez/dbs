@@ -10,12 +10,13 @@ import (
 
 	"github.com/fatih/color"
 
-	"github.com/c88lopez/dbs/common"
-	"github.com/c88lopez/dbs/config"
-	"github.com/c88lopez/dbs/entity"
-	"github.com/c88lopez/dbs/help"
+	"github.com/c88lopez/dbs/src/common"
+	"github.com/c88lopez/dbs/src/config"
+	"github.com/c88lopez/dbs/src/entity"
+	"github.com/c88lopez/dbs/src/help"
 
-	"github.com/c88lopez/dbs/handlers"
+	"github.com/c88lopez/dbs/src/database"
+	"github.com/c88lopez/dbs/src/handlers"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -39,18 +40,15 @@ func Execute() error {
 			config.SetConfigFilePath()
 			loadConfiguration()
 
-			handlers.StartConnectionPool()
-			s, err := buildSchemaState()
+			database.StartConnectionPool()
+			defer database.CloseConnectionPool()
+
+			s, err := database.BuildSchemaState()
 			if nil != err {
 				return err
 			}
 
 			generateJsonSchemaState(s)
-			if nil != err {
-				return err
-			}
-
-			handlers.CloseConnectionPool()
 			if nil != err {
 				return err
 			}
@@ -69,22 +67,6 @@ func loadConfiguration() {
 	config.LoadConfig()
 
 	color.Green("Done.\n")
-}
-
-func buildSchemaState() (*entity.Schema, error) {
-	fmt.Print("Building schema state... ")
-	schema := new(entity.Schema)
-
-	schema.Name = config.Parameters.Database
-	err := schema.LoadInformationSchema(DbConnPool)
-	if nil != err {
-		return nil, err
-	}
-	schema.FetchTables(DbConnPool)
-
-	color.Green("Done.\n")
-
-	return schema, nil
 }
 
 func generateJsonSchemaState(s *entity.Schema) error {
