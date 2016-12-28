@@ -11,21 +11,28 @@ import (
 
 var DbConnPool *sql.DB
 
-func StartConnectionPool() {
+func StartConnectionPool() error {
 	fmt.Print("Initializing connection pool... ")
 
-	OpenConnectionPool(
+	if err := OpenConnectionPool(
 		config.Parameters.Username + ":" + config.Parameters.Password + "@" + config.Parameters.Protocol + "(" +
-			config.Parameters.Host + ":" + config.Parameters.Port + ")/" + config.Parameters.Database)
+			config.Parameters.Host + ":" + config.Parameters.Port + ")/" + config.Parameters.Database); err != nil {
+		return err
+	}
 
 	color.Green("Done.\n")
+
+	return nil
 }
 
 func OpenConnectionPool(dsn string) error {
 	var err error
 
-	DbConnPool, err = sql.Open(config.Parameters.Driver, dsn)
-	if nil != err {
+	if DbConnPool, err = sql.Open(config.Parameters.Driver, dsn); nil != err {
+		return err
+	}
+
+	if err = DbConnPool.Ping(); nil != err {
 		return err
 	}
 

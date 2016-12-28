@@ -40,7 +40,9 @@ func Execute() error {
 			config.SetConfigFilePath()
 			loadConfiguration()
 
-			database.StartConnectionPool()
+			if err := database.StartConnectionPool(); nil != err {
+				return err
+			}
 			defer database.CloseConnectionPool()
 
 			s, err := database.BuildSchemaState()

@@ -8,8 +8,8 @@ import (
 )
 
 func Error(e error) {
-	color.Red("\n\nError")
-	fmt.Println(e)
+	color.Red("Error.")
+	fmt.Printf("\n%s\n", e)
 
 	os.Exit(1)
 }
