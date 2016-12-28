@@ -1,5 +1,15 @@
 package handlers
 
+import (
+	"fmt"
+	"os"
+
+	"github.com/fatih/color"
+)
+
 func Error(e error) {
-	panic(e)
+	color.Red("\n\nError")
+	fmt.Println(e)
+
+	os.Exit(1)
 }
