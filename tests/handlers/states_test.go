@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/c88lopez/dbs/handlers"
+	"github.com/c88lopez/dbs/src/handlers"
 )
 
 func TestGetFileLastLine(t *testing.T) {

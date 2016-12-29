@@ -21,10 +21,9 @@ func (t *Table) AddColumn(c Column) *Table {
 
 // FetchColumns func
 func (t *Table) FetchColumns(pool *sql.DB) (*Table, error) {
-	query := "DESCRIBE " + t.Name
-
 	var result *sql.Rows
-	result, err := pool.Query(query)
+
+	result, err := pool.Query("DESCRIBE " + t.Name)
 	if nil != err {
 		return nil, err
 	}
