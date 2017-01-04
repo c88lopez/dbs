@@ -16,8 +16,10 @@ func StartConnectionPool() error {
 	fmt.Print("Initializing connection pool... ")
 
 	if err := OpenConnectionPool(
-		config.Parameters.Username + ":" + config.Parameters.Password + "@" + config.Parameters.Protocol + "(" +
-			config.Parameters.Host + ":" + config.Parameters.Port + ")/" + config.Parameters.Database); err != nil {
+		config.Parameters.Username + ":" +
+			config.Parameters.Password + "@" + config.Parameters.Protocol + "(" +
+			config.Parameters.Host + ":" + config.Parameters.Port + ")/" +
+			config.Parameters.Database); err != nil {
 		return err
 	}
 
