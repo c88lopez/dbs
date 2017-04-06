@@ -1,4 +1,4 @@
-package main
+package dbs
 
 import (
 	"github.com/c88lopez/dbs/src/command"

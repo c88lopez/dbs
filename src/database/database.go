@@ -13,12 +13,12 @@ func BuildSchemaState() (*entity.Schema, error) {
 	schema := new(entity.Schema)
 
 	schema.Name = config.Parameters.Database
-	err := schema.LoadInformationSchema(DbConnPool)
+	err := schema.LoadInformationSchema()
 	if nil != err {
 		return nil, err
 	}
 
-	if err := schema.FetchTables(DbConnPool); nil != err {
+	if err := schema.FetchTables(); nil != err {
 		return nil, err
 	}
 
