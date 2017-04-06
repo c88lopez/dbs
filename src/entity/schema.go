@@ -8,8 +8,7 @@ type Schema struct {
 	CharsetName   string `json:"charsetName"`
 	CollationName string `json:"collationName"`
 
-	TableCount int     `json:"tableCount"`
-	Tables     []Table `json:"tables"`
+	Tables []Table `json:"tables"`
 }
 
 // LoadTables func
@@ -20,7 +19,6 @@ func (s *Schema) LoadTables() bool {
 // AddTable func
 func (s *Schema) AddTable(t Table) *Schema {
 	s.Tables = append(s.Tables, t)
-	s.TableCount++
 
 	return s
 }
@@ -50,12 +48,10 @@ func (s *Schema) LoadInformationSchema(pool *sql.DB) error {
 }
 
 // FetchTables func
-func (s *Schema) FetchTables(pool *sql.DB) (int, error) {
-	s.TableCount = 0
-
+func (s *Schema) FetchTables(pool *sql.DB) error {
 	rows, err := pool.Query("SHOW TABLES")
 	if nil != err {
-		return -1, err
+		return err
 	}
 	defer rows.Close()
 
@@ -63,7 +59,7 @@ func (s *Schema) FetchTables(pool *sql.DB) (int, error) {
 		var table Table
 
 		if nil != rows.Scan(&table.Name) {
-			return -1, err
+			return err
 		}
 
 		table.FetchColumns(pool)
@@ -71,5 +67,5 @@ func (s *Schema) FetchTables(pool *sql.DB) (int, error) {
 		s.AddTable(table)
 	}
 
-	return s.TableCount, nil
+	return nil
 }

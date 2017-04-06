@@ -17,7 +17,10 @@ func BuildSchemaState() (*entity.Schema, error) {
 	if nil != err {
 		return nil, err
 	}
-	schema.FetchTables(DbConnPool)
+
+	if err := schema.FetchTables(DbConnPool); nil != err {
+		return nil, err
+	}
 
 	color.Green("Done.\n")
 
