@@ -1,5 +1,7 @@
 package entity
 
+import "database/sql"
+
 // Schema struct
 type Schema struct {
 	Name          string `json:"name"`
@@ -27,8 +29,8 @@ func (s *Schema) GetTables() []Table {
 }
 
 // LoadInformationSchema func
-func (s *Schema) LoadInformationSchema() error {
-	rows, err := DbConnPool.Query("SELECT DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '" + s.Name + "'")
+func (s *Schema) LoadInformationSchema(db *sql.DB) error {
+	rows, err := db.Query("SELECT DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '" + s.Name + "'")
 	if nil != err {
 		return err
 	}
@@ -46,8 +48,10 @@ func (s *Schema) LoadInformationSchema() error {
 }
 
 // FetchTables func
-func (s *Schema) FetchTables() error {
-	rows, err := DbConnPool.Query("SHOW TABLES")
+func (s *Schema) FetchTables(db *sql.DB) error {
+	var err error
+
+	rows, err := db.Query("SHOW TABLES")
 	if nil != err {
 		return err
 	}
@@ -60,7 +64,10 @@ func (s *Schema) FetchTables() error {
 			return err
 		}
 
-		table.Fetch()
+		err = table.Fetch(db)
+		if nil != err {
+			return err
+		}
 
 		s.AddTable(table)
 	}

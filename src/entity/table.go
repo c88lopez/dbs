@@ -2,8 +2,10 @@ package entity
 
 import (
 	"database/sql"
+	"os"
+	"runtime/trace"
 
-	"github.com/c88lopez/dbs/src/database"
+	"github.com/c88lopez/dbs/src/handlers"
 )
 
 // Table struct
@@ -32,15 +34,26 @@ func (t *Table) AddIndex(i Index) *Table {
 }
 
 // FetchColumns func
-func (t *Table) Fetch() error {
+func (t *Table) Fetch(db *sql.DB) error {
 	var err error
 
-	err = t.fetchColumns()
+	traceFile, err := os.Create("trace.pprof")
+	if nil != err {
+		handlers.Error(err)
+	}
+	defer traceFile.Close()
+
+	if err := trace.Start(traceFile); nil != err {
+		panic(err)
+	}
+	defer trace.Stop()
+
+	err = t.FetchColumns(db)
 	if nil != err {
 		return err
 	}
 
-	err = t.fetchIndexes()
+	err = t.FetchIndexes(db)
 	if nil != err {
 		return err
 	}
@@ -49,10 +62,11 @@ func (t *Table) Fetch() error {
 }
 
 // fetchColumns func
-func (t *Table) fetchColumns() error {
+func (t *Table) FetchColumns(db *sql.DB) error {
+	var err error
 	var result *sql.Rows
 
-	result, err := DbConnPool.Query("DESCRIBE " + t.Name)
+	result, err = db.Query("DESCRIBE " + t.Name)
 	if nil != err {
 		return err
 	}
@@ -60,12 +74,16 @@ func (t *Table) fetchColumns() error {
 	for result.Next() {
 		var column Column
 
-		result.Scan(&column.Name,
+		err = result.Scan(&column.Name,
 			&column.DataType,
 			&column.Nullable,
 			&column.Key,
 			&column.DefaultValue,
 			&column.Extra)
+
+		if nil != err {
+			return err
+		}
 
 		t.AddColumn(column)
 	}
@@ -74,18 +92,22 @@ func (t *Table) fetchColumns() error {
 }
 
 // fetchIndexes func
-func (t *Table) fetchIndexes() error {
+func (t *Table) FetchIndexes(db *sql.DB) error {
+	var err error
 	var result *sql.Rows
 
-	result, err := database.DbConnPool.Query("SHOW INDEX FROM " + t.Name)
+	result, err = db.Query("SHOW INDEX FROM " + t.Name)
 	if nil != err {
 		return err
 	}
 
+	var tableName string
+
 	for result.Next() {
 		var index Index
 
-		result.Scan(&index.NonUnique,
+		err = result.Scan(&tableName,
+			&index.NonUnique,
 			&index.KeyName,
 			&index.SeqInIndex,
 			&index.ColumnName,
@@ -97,6 +119,10 @@ func (t *Table) fetchIndexes() error {
 			&index.IndexType,
 			&index.Comment,
 			&index.IndexComment)
+
+		if nil != err {
+			return err
+		}
 
 		t.AddIndex(index)
 	}
