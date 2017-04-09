@@ -12,8 +12,9 @@ import (
 type Table struct {
 	Name string `json:"name"`
 
-	Columns []Column `json:"columns"`
-	Indexes []Index  `json:"indexes"`
+	Columns     []Column     `json:"columns"`
+	Indexes     []Index      `json:"indexes"`
+	ForeignKeys []ForeignKey `json:"foreignKeys"`
 
 	Engine         string `json:"engine"`
 	DefaultCharset string `json:"defaultCharset"`
@@ -29,6 +30,13 @@ func (t *Table) AddColumn(c Column) *Table {
 // AddIndex func
 func (t *Table) AddIndex(i Index) *Table {
 	t.Indexes = append(t.Indexes, i)
+
+	return t
+}
+
+// AddIndex func
+func (t *Table) AddForeignKey(f ForeignKey) *Table {
+	t.ForeignKeys = append(t.ForeignKeys, f)
 
 	return t
 }
@@ -54,6 +62,11 @@ func (t *Table) Fetch(db *sql.DB) error {
 	}
 
 	err = t.FetchIndexes(db)
+	if nil != err {
+		return err
+	}
+
+	err = t.FetchForeignKeys(db)
 	if nil != err {
 		return err
 	}
@@ -125,6 +138,42 @@ func (t *Table) FetchIndexes(db *sql.DB) error {
 		}
 
 		t.AddIndex(index)
+	}
+
+	return nil
+}
+
+// fetchIndexes func
+func (t *Table) FetchForeignKeys(db *sql.DB) error {
+	var err error
+	var result *sql.Rows
+
+	result, err = db.Query(`SELECT
+	table_name,
+		column_name,
+		constraint_name,
+		referenced_table_name,
+		referenced_column_name
+	FROM information_schema.key_column_usage
+	WHERE referenced_column_name IS NOT NULL AND table_name = '` + t.Name + `'`)
+	if nil != err {
+		return err
+	}
+
+	for result.Next() {
+		var foreignKey ForeignKey
+
+		err = result.Scan(&foreignKey.TableName,
+			&foreignKey.ColumnName,
+			&foreignKey.ConstraintName,
+			&foreignKey.ReferencedTableName,
+			&foreignKey.ReferencedColumnName)
+
+		if nil != err {
+			return err
+		}
+
+		t.AddForeignKey(foreignKey)
 	}
 
 	return nil
