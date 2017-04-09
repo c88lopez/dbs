@@ -1,12 +1,6 @@
 package entity
 
-import (
-	"database/sql"
-	"os"
-	"runtime/trace"
-
-	"github.com/c88lopez/dbs/src/handlers"
-)
+import "database/sql"
 
 // Table struct
 type Table struct {
@@ -44,17 +38,6 @@ func (t *Table) AddForeignKey(f ForeignKey) *Table {
 // FetchColumns func
 func (t *Table) Fetch(db *sql.DB) error {
 	var err error
-
-	traceFile, err := os.Create("trace.pprof")
-	if nil != err {
-		handlers.Error(err)
-	}
-	defer traceFile.Close()
-
-	if err := trace.Start(traceFile); nil != err {
-		panic(err)
-	}
-	defer trace.Stop()
 
 	err = t.FetchColumns(db)
 	if nil != err {
