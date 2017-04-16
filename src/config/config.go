@@ -9,7 +9,7 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 )
 
-var configFilePath string
+var filePath string
 var Parameters = new(Config)
 
 // Config struct
@@ -25,11 +25,9 @@ type Config struct {
 
 func SetConfigFilePath() error {
 	dir, err := os.Getwd()
-	if nil != err {
-		return err
+	if nil == err {
+		filePath = dir + "/.dbs/config"
 	}
-
-	configFilePath = dir + "/.dbs/config"
 
 	return err
 }
@@ -48,20 +46,15 @@ func GetConfigTemplate() ([]byte, error) {
 func LoadConfig() error {
 	SetConfigFilePath()
 
-	configFile, err := os.Open(configFilePath)
+	file, err := os.Open(filePath)
 	if nil != err {
 		return err
 	}
-	defer configFile.Close()
+	defer file.Close()
 
-	decoder := json.NewDecoder(configFile)
+	decoder := json.NewDecoder(file)
 
-	err = decoder.Decode(&Parameters)
-	if nil != err {
-		return err
-	}
-
-	return nil
+	return decoder.Decode(&Parameters)
 }
 
 func SetDatabaseConfigInteractively() error {
@@ -77,13 +70,10 @@ func SetDatabaseConfigInteractively() error {
 	Parameters.Port = getPort(defaultParameters.Port)
 	Parameters.Username = getUsername(defaultParameters.Username)
 
-	if Parameters.Password, err = getPassword(); nil != err {
-		return err
+	if Parameters.Password, err = getPassword(); nil == err {
+		Parameters.Database = getDatabase(defaultParameters.Database)
+		saveConfig(Parameters)
 	}
-
-	Parameters.Database = getDatabase(defaultParameters.Database)
-
-	saveConfig(Parameters)
 
 	return err
 }
@@ -192,22 +182,17 @@ func getDefaultParameters() Config {
 func saveConfig(parameters *Config) error {
 	SetConfigFilePath()
 
-	configFile, err := os.OpenFile(configFilePath, os.O_WRONLY, 0600)
+	file, err := os.OpenFile(filePath, os.O_WRONLY, 0600)
 	if nil != err {
 		return err
 	}
-	defer configFile.Close()
+	defer file.Close()
 
-	configFile.Truncate(0)
-	configJson, err := json.Marshal(parameters)
-	if nil != err {
-		return err
+	file.Truncate(0)
+	jsonString, err := json.Marshal(parameters)
+	if nil == err {
+		_, err = file.Write(jsonString)
 	}
 
-	_, err = configFile.Write(configJson)
-	if nil != err {
-		return err
-	}
-
-	return nil
+	return err
 }

@@ -31,20 +31,19 @@ func (s *Schema) GetTables() []Table {
 // LoadInformationSchema func
 func (s *Schema) LoadInformationSchema(db *sql.DB) error {
 	rows, err := db.Query("SELECT DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '" + s.Name + "'")
-	if nil != err {
-		return err
+	if nil == err {
+		defer rows.Close()
+
+		rows.Next()
+
+		var charset, collation string
+		rows.Scan(&charset, &collation)
+
+		s.CharsetName = charset
+		s.CollationName = collation
 	}
-	defer rows.Close()
 
-	rows.Next()
-
-	var charset, collation string
-	rows.Scan(&charset, &collation)
-
-	s.CharsetName = charset
-	s.CollationName = collation
-
-	return nil
+	return err
 }
 
 // FetchTables func
@@ -52,25 +51,24 @@ func (s *Schema) FetchTables(db *sql.DB) error {
 	var err error
 
 	rows, err := db.Query("SHOW TABLES")
-	if nil != err {
-		return err
-	}
-	defer rows.Close()
+	if nil == err {
+		defer rows.Close()
 
-	for rows.Next() {
-		var table Table
+		for rows.Next() {
+			var table Table
 
-		if nil != rows.Scan(&table.Name) {
-			return err
+			if nil != rows.Scan(&table.Name) {
+				return err
+			}
+
+			err = table.Fetch(db)
+			if nil != err {
+				return err
+			}
+
+			s.AddTable(table)
 		}
-
-		err = table.Fetch(db)
-		if nil != err {
-			return err
-		}
-
-		s.AddTable(table)
 	}
 
-	return nil
+	return err
 }

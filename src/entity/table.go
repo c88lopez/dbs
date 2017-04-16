@@ -40,21 +40,14 @@ func (t *Table) Fetch(db *sql.DB) error {
 	var err error
 
 	err = t.FetchColumns(db)
-	if nil != err {
-		return err
+	if nil == err {
+		err = t.FetchIndexes(db)
+		if nil == err {
+			err = t.FetchForeignKeys(db)
+		}
 	}
 
-	err = t.FetchIndexes(db)
-	if nil != err {
-		return err
-	}
-
-	err = t.FetchForeignKeys(db)
-	if nil != err {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 // fetchColumns func
@@ -63,25 +56,23 @@ func (t *Table) FetchColumns(db *sql.DB) error {
 	var result *sql.Rows
 
 	result, err = db.Query("DESCRIBE " + t.Name)
-	if nil != err {
-		return err
-	}
+	if nil == err {
+		for result.Next() {
+			var column Column
 
-	for result.Next() {
-		var column Column
+			err = result.Scan(&column.Name,
+				&column.DataType,
+				&column.Nullable,
+				&column.Key,
+				&column.DefaultValue,
+				&column.Extra)
 
-		err = result.Scan(&column.Name,
-			&column.DataType,
-			&column.Nullable,
-			&column.Key,
-			&column.DefaultValue,
-			&column.Extra)
+			if nil != err {
+				return err
+			}
 
-		if nil != err {
-			return err
+			t.AddColumn(column)
 		}
-
-		t.AddColumn(column)
 	}
 
 	return nil
@@ -139,25 +130,23 @@ func (t *Table) FetchForeignKeys(db *sql.DB) error {
 		referenced_column_name
 	FROM information_schema.key_column_usage
 	WHERE referenced_column_name IS NOT NULL AND table_name = '` + t.Name + `'`)
-	if nil != err {
-		return err
-	}
+	if nil == err {
+		for result.Next() {
+			var foreignKey ForeignKey
 
-	for result.Next() {
-		var foreignKey ForeignKey
+			err = result.Scan(&foreignKey.TableName,
+				&foreignKey.ColumnName,
+				&foreignKey.ConstraintName,
+				&foreignKey.ReferencedTableName,
+				&foreignKey.ReferencedColumnName)
 
-		err = result.Scan(&foreignKey.TableName,
-			&foreignKey.ColumnName,
-			&foreignKey.ConstraintName,
-			&foreignKey.ReferencedTableName,
-			&foreignKey.ReferencedColumnName)
+			if nil != err {
+				return err
+			}
 
-		if nil != err {
-			return err
+			t.AddForeignKey(foreignKey)
 		}
-
-		t.AddForeignKey(foreignKey)
 	}
 
-	return nil
+	return err
 }

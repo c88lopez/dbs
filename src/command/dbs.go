@@ -18,5 +18,6 @@ func Execute() error {
 	}
 
 	fmt.Printf("\nElapsed time: %s\n", time.Since(start))
+
 	return nil
 }
