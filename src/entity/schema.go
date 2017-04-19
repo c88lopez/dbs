@@ -30,7 +30,9 @@ func (s *Schema) GetTables() []Table {
 
 // LoadInformationSchema func
 func (s *Schema) LoadInformationSchema(db *sql.DB) error {
-	rows, err := db.Query("SELECT DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '" + s.Name + "'")
+	rows, err := db.Query(`SELECT DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME 
+	FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '` + s.Name + `'`)
+
 	if nil == err {
 		defer rows.Close()
 

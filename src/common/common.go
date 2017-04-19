@@ -11,6 +11,7 @@ import (
 
 var mainFolderPath string
 
+// SetMainFolderPath func
 func SetMainFolderPath() error {
 	dir, err := os.Getwd()
 	if nil == err {
@@ -20,6 +21,7 @@ func SetMainFolderPath() error {
 	return err
 }
 
+// GenerateMainFolder func
 func GenerateMainFolder() error {
 	fmt.Print("Initializing... ")
 
@@ -51,6 +53,7 @@ func GenerateMainFolder() error {
 	return nil
 }
 
+// GetStatesDirPath func
 func GetStatesDirPath() string {
 	SetMainFolderPath()
 

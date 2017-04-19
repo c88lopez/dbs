@@ -7,9 +7,12 @@ import (
 	"github.com/fatih/color"
 )
 
+// Error func
 func Error(e error) {
-	color.Red("Error!")
-	fmt.Printf("\n%s\n", e)
+	if nil != e {
+		color.Red("Error!")
+		fmt.Printf("\n%s\n", e)
 
-	os.Exit(1)
+		os.Exit(1)
+	}
 }

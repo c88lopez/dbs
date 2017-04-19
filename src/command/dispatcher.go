@@ -7,8 +7,10 @@ import (
 	"github.com/c88lopez/dbs/src/config"
 	"github.com/c88lopez/dbs/src/database"
 	"github.com/c88lopez/dbs/src/help"
+	"github.com/c88lopez/dbs/src/statesDiff"
 )
 
+// Dispatch func
 func Dispatch() error {
 	var err error
 
@@ -26,6 +28,9 @@ func Dispatch() error {
 			break
 		case "new":
 			err = database.New()
+			break
+		case "diff":
+			err = statesDiff.Diff()
 			break
 		}
 	}

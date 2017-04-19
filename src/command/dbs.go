@@ -7,17 +7,11 @@ import (
 	"github.com/c88lopez/dbs/src/handlers"
 )
 
-// Executes the dbs.
-func Execute() error {
-	var err error
-
+// Execute dbs.
+func Execute() {
 	start := time.Now()
 
-	if err = Dispatch(); nil != err {
-		handlers.Error(err)
-	}
+	handlers.Error(Dispatch())
 
 	fmt.Printf("\nElapsed time: %s\n", time.Since(start))
-
-	return nil
 }

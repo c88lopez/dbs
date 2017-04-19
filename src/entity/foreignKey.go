@@ -1,6 +1,6 @@
 package entity
 
-// Index struct
+// ForeignKey struct
 type ForeignKey struct {
 	TableName            string `json:"tableName"`
 	ColumnName           string `json:"columnName"`

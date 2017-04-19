@@ -28,14 +28,14 @@ func (t *Table) AddIndex(i Index) *Table {
 	return t
 }
 
-// AddIndex func
+// AddForeignKey func
 func (t *Table) AddForeignKey(f ForeignKey) *Table {
 	t.ForeignKeys = append(t.ForeignKeys, f)
 
 	return t
 }
 
-// FetchColumns func
+// Fetch func
 func (t *Table) Fetch(db *sql.DB) error {
 	var err error
 
@@ -50,7 +50,7 @@ func (t *Table) Fetch(db *sql.DB) error {
 	return err
 }
 
-// fetchColumns func
+// FetchColumns func
 func (t *Table) FetchColumns(db *sql.DB) error {
 	var err error
 	var result *sql.Rows
@@ -78,7 +78,7 @@ func (t *Table) FetchColumns(db *sql.DB) error {
 	return nil
 }
 
-// fetchIndexes func
+// FetchIndexes func
 func (t *Table) FetchIndexes(db *sql.DB) error {
 	var err error
 	var result *sql.Rows
@@ -117,7 +117,7 @@ func (t *Table) FetchIndexes(db *sql.DB) error {
 	return nil
 }
 
-// fetchIndexes func
+// FetchForeignKeys func
 func (t *Table) FetchForeignKeys(db *sql.DB) error {
 	var err error
 	var result *sql.Rows
@@ -130,6 +130,7 @@ func (t *Table) FetchForeignKeys(db *sql.DB) error {
 		referenced_column_name
 	FROM information_schema.key_column_usage
 	WHERE referenced_column_name IS NOT NULL AND table_name = '` + t.Name + `'`)
+
 	if nil == err {
 		for result.Next() {
 			var foreignKey ForeignKey
