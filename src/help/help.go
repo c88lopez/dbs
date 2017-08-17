@@ -18,8 +18,8 @@ Usage: dbs <command> [<arg>, ...]
 
 Commands:
 
-init		Initialize.
-config		Configure the database connection.
-generate	Build and persist the current database state.
+init	Initialize.
+config	Configure the database connection.
+new		Build and persist the current database state.
 `)
 }
