@@ -1,13 +1,19 @@
-.PHONY: install
+
 install:
-	### Clear ###
-	rm -rf .dbs/
+	### Clearing .dbs folder ###
+	@rm -rf .dbs/
 	
-	### Replace version before install ###
-	sed -i "s/~@DBS_VERSION@~/"$$(git rev-parse HEAD)"/g" src/help/help.go
-	go install
+	### Replacing version ###
+	@sed -i "s/~@DBS_VERSION@~/"$$(git rev-parse HEAD)"/g" src/help/help.go
+
+	### Installing ###
+	@go install
 	
-	### Revert changes ###
-	git checkout -- src/help/help.go
+	### Reverting changes ###
+	@git checkout -- src/help/help.go
+
+	### Done! ###
+.PHONY: install
+
 clean:
 	rm -rf .dbs/
