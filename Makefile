@@ -1,4 +1,3 @@
-
 install:
 	### Clearing .dbs folder ###
 	@rm -rf .dbs/
