@@ -23,10 +23,19 @@ type Config struct {
 	Database string `json:"database"`
 }
 
-func SetConfigFilePath() error {
+func GetMainFolderPath() (string, error) {
 	dir, err := os.Getwd()
+	if nil != err {
+		return "", err
+	}
+
+	return dir + "/.dbs", nil
+}
+
+func SetConfigFilePath() error {
+	dir, err := GetMainFolderPath()
 	if nil == err {
-		filePath = dir + "/.dbs/config"
+		filePath = dir + "/config"
 	}
 
 	return err

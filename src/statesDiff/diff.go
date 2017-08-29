@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/c88lopez/dbs/src/config"
 	"github.com/c88lopez/dbs/src/entity"
 )
 
@@ -23,7 +24,7 @@ func Diff() error {
 }
 
 func diffCurrentPrevious() error {
-	dir, err := os.Getwd()
+	dir, err := config.GetMainFolderPath()
 	if nil != err {
 		return err
 	}
@@ -31,15 +32,11 @@ func diffCurrentPrevious() error {
 	/**
 	get paths (we can put these as get in another place
 	*/
-	statesDir := dir + "/.dbs/states"
+	statesDir := dir + "/states"
 	historyDir := statesDir + "/history"
 	currentLink := statesDir + "/current"
 
-	fmt.Printf("currentLink: %s\n", currentLink)
-
 	currentState, _ := os.Readlink(currentLink)
-
-	fmt.Printf("currentState: %v\n", currentState)
 
 	f, err := os.Open(historyDir)
 	if err != nil {
@@ -72,15 +69,10 @@ func diffCurrentPrevious() error {
 	decoder := json.NewDecoder(file)
 
 	currentSchema := new(entity.Schema)
-
 	err = decoder.Decode(currentSchema)
 	if err != nil {
 		return err
 	}
-
-	fmt.Printf("currentSchema.Tables: %v\n", currentSchema.Tables)
-
-	fmt.Printf("nextState: %s\n", nextState)
 
 	file, err = os.Open(statesDir + "/" + nextState)
 	if nil != err {
@@ -91,13 +83,10 @@ func diffCurrentPrevious() error {
 	decoder = json.NewDecoder(file)
 
 	nextSchema := new(entity.Schema)
-
 	err = decoder.Decode(nextSchema)
 	if err != nil {
 		return err
 	}
-
-	fmt.Printf("nextSchema.Tables:  %v\n", nextSchema.Tables)
 
 	/**
 	here we check deeply for differences
@@ -106,8 +95,6 @@ func diffCurrentPrevious() error {
 	var checkingColumnIndex int
 	for _, csTable := range currentSchema.Tables {
 		checkingTableIndex = -1
-
-		fmt.Printf("table: %s\n", csTable.Name)
 
 		/**
 		Looking if the table exists
@@ -123,10 +110,14 @@ func diffCurrentPrevious() error {
 			// Table does not exists => drop
 			fmt.Printf("Should drop table %s", csTable.Name)
 		} else {
-			// Table found, checking columns
-			for _, csColumn := range csTable.Columns {
-				fmt.Printf("column: %s\n", csColumn.Name)
+			// Table found, checking definition and columns
+			if csTable.DefaultCharset != nextSchema.Tables[checkingTableIndex].DefaultCharset ||
+				csTable.Engine != nextSchema.Tables[checkingTableIndex].Engine {
+				// The table has not the same definition
+				fmt.Printf("Should alter table %s\n", csTable.Name)
+			}
 
+			for _, csColumn := range csTable.Columns {
 				/**
 				Looking if the column exists
 				*/
@@ -142,6 +133,12 @@ func diffCurrentPrevious() error {
 							csColumn.Extra != nsColumn.Extra {
 							// The column has not the same definition
 							fmt.Printf("Should alter column %s.%s\n", csTable.Name, csColumn.Name)
+
+							if csColumn.DataType != nsColumn.DataType {
+								fmt.Printf("\t- Type: %s => %s", csColumn.DataType, nsColumn.DataType)
+							}
+
+							fmt.Println()
 						}
 
 						break
