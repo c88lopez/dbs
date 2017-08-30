@@ -150,6 +150,11 @@ func diffCurrentPrevious() error {
 					fmt.Printf("Should drop column %s.%s", csTable.Name, csColumn.Name)
 				}
 			}
+
+			/**
+			We should also checks table's FK and idxs...
+			*/
+
 		}
 	}
 
