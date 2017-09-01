@@ -29,8 +29,8 @@ func diffCurrentPrevious() error {
 		return err
 	}
 
-	/**
-	get paths (we can put these as get in another place
+	/*
+		get paths (we can put these as get in another place
 	*/
 	statesDir := dir + "/states"
 	historyDir := statesDir + "/history"
@@ -43,8 +43,8 @@ func diffCurrentPrevious() error {
 		return err
 	}
 
-	/**
-	searching the following state (we need to handle if there is no next state)
+	/*
+		searching the following state (we need to handle if there is no next state)
 	*/
 	var nextState string
 	scanner := bufio.NewScanner(f)
@@ -57,8 +57,8 @@ func diffCurrentPrevious() error {
 		}
 	}
 
-	/**
-	decoding both current and next states
+	/*
+		decoding both current and next states
 	*/
 	file, err := os.Open(statesDir + "/" + currentState)
 	if nil != err {
@@ -88,16 +88,20 @@ func diffCurrentPrevious() error {
 		return err
 	}
 
-	/**
-	here we check deeply for differences
+	/*
+		here we check deeply for differences
 	*/
+	var sc schemaChanges
+
 	var checkingTableIndex int
 	var checkingColumnIndex int
 	for _, csTable := range currentSchema.Tables {
 		checkingTableIndex = -1
 
-		/**
-		Looking if the table exists
+		csTableStatus := tableStatus{TableFinal: csTable}
+
+		/*
+			Looking if the table exists
 		*/
 		for nsTableIndex, nsTable := range nextSchema.Tables {
 			if nsTable.Name == csTable.Name {
@@ -109,17 +113,19 @@ func diffCurrentPrevious() error {
 		if checkingTableIndex == -1 {
 			// Table does not exists => drop
 			fmt.Printf("Should drop table %s", csTable.Name)
+			csTableStatus.Status = "drop"
 		} else {
 			// Table found, checking definition and columns
 			if csTable.DefaultCharset != nextSchema.Tables[checkingTableIndex].DefaultCharset ||
 				csTable.Engine != nextSchema.Tables[checkingTableIndex].Engine {
 				// The table has not the same definition
 				fmt.Printf("Should alter table %s\n", csTable.Name)
+				csTableStatus.Status = "alter_definition"
 			}
 
 			for _, csColumn := range csTable.Columns {
-				/**
-				Looking if the column exists
+				/*
+					Looking if the column exists
 				*/
 				checkingColumnIndex = -1
 				for nsColumnIndex, nsColumn := range nextSchema.Tables[checkingTableIndex].Columns {
@@ -136,6 +142,8 @@ func diffCurrentPrevious() error {
 
 							if csColumn.DataType != nsColumn.DataType {
 								fmt.Printf("\t- Type: %s => %s", csColumn.DataType, nsColumn.DataType)
+								csTableStatus.ColumnsFinal = append(
+									csTableStatus.ColumnsFinal, columnStatus{Status: "alter", ColumnFinal: nsColumn})
 							}
 
 							fmt.Println()
@@ -148,15 +156,40 @@ func diffCurrentPrevious() error {
 				if checkingColumnIndex == -1 {
 					// Column does not exists => drop
 					fmt.Printf("Should drop column %s.%s", csTable.Name, csColumn.Name)
+					csTableStatus.ColumnsFinal = append(
+						csTableStatus.ColumnsFinal, columnStatus{Status: "drop", ColumnFinal: csColumn})
 				}
 			}
 
-			/**
-			We should also checks table's FK and idxs...
+			/*
+				We should also checks table's FK and idxs...
 			*/
 
 		}
+
+		sc.tables = append(sc.tables, csTableStatus)
 	}
 
+	fmt.Printf("\n\nSchema diffs struct: %#v\n\n", sc)
+
+	/*
+		finally we should check for new tables
+	*/
+
 	return nil
+}
+
+type schemaChanges struct {
+	tables []tableStatus
+}
+
+type tableStatus struct {
+	Status       string
+	TableFinal   entity.Table
+	ColumnsFinal []columnStatus
+}
+
+type columnStatus struct {
+	Status      string
+	ColumnFinal entity.Column
 }

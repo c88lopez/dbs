@@ -12,7 +12,7 @@ applyversionhash:
 
 goinstall:
 	@echo "### Installing ###"
-	@go install
+	@go install -ldflags "-w"
 
 revertversionchanges:
 	@echo "### Reverting changes ###"
