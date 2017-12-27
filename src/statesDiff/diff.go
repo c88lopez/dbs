@@ -14,19 +14,26 @@ import (
 // func Diff
 func Diff() error {
 	var err error
+	var sc schemaChanges
 
 	switch os.Args {
 	default:
-		err = diffCurrentPrevious()
+		sc, err = diffCurrentNext()
 	}
 
-	return err
+	if err != nil {
+		return err
+	}
+
+	migrateNextStatus(sc)
+
+	return nil
 }
 
-func diffCurrentPrevious() error {
+func diffCurrentNext() (schemaChanges, error) {
 	dir, err := config.GetMainFolderPath()
 	if nil != err {
-		return err
+		return schemaChanges{}, err
 	}
 
 	/*
@@ -40,7 +47,7 @@ func diffCurrentPrevious() error {
 
 	f, err := os.Open(historyDir)
 	if err != nil {
-		return err
+		return schemaChanges{}, err
 	}
 
 	/*
@@ -62,7 +69,7 @@ func diffCurrentPrevious() error {
 	*/
 	file, err := os.Open(statesDir + "/" + currentState)
 	if nil != err {
-		return err
+		return schemaChanges{}, err
 	}
 	defer file.Close()
 
@@ -71,12 +78,12 @@ func diffCurrentPrevious() error {
 	currentSchema := new(entity.Schema)
 	err = decoder.Decode(currentSchema)
 	if err != nil {
-		return err
+		return schemaChanges{}, err
 	}
 
 	file, err = os.Open(statesDir + "/" + nextState)
 	if nil != err {
-		return err
+		return schemaChanges{}, err
 	}
 	defer file.Close()
 
@@ -85,7 +92,7 @@ func diffCurrentPrevious() error {
 	nextSchema := new(entity.Schema)
 	err = decoder.Decode(nextSchema)
 	if err != nil {
-		return err
+		return schemaChanges{}, err
 	}
 
 	/*
@@ -185,9 +192,7 @@ func diffCurrentPrevious() error {
 		}
 	}
 
-	fmt.Printf("\n\nSchema diffs struct: %#v\n\n", sc)
-
-	return nil
+	return sc, nil
 }
 
 type schemaChanges struct {
