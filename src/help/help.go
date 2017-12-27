@@ -2,7 +2,7 @@ package help
 
 import "fmt"
 
-const version = "b93e2dd4cc2942e44a4cfdbedb368e419d432d1b"
+const version = "~@DBS_VERSION@~"
 
 // Displays the version of dbs.
 func showVersion() {
