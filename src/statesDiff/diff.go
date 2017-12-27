@@ -98,7 +98,7 @@ func diffCurrentPrevious() error {
 	for _, csTable := range currentSchema.Tables {
 		checkingTableIndex = -1
 
-		csTableStatus := tableStatus{TableFinal: csTable}
+		csTableStatus := tableStatus{}
 
 		/*
 			Looking if the table exists
@@ -167,7 +167,19 @@ func diffCurrentPrevious() error {
 
 		}
 
-		sc.tables = append(sc.tables, csTableStatus)
+		if csTableStatus.Status != "" {
+			sc.tables = append(sc.tables, csTableStatus)
+		}
+	}
+
+	for _, nsTable := range nextSchema.Tables {
+		for _, csTable := range currentSchema.Tables {
+			if nsTable.Name != csTable.Name {
+				sc.tables = append(sc.tables, tableStatus{Status: "new", TableFinal: nsTable})
+
+				break
+			}
+		}
 	}
 
 	fmt.Printf("\n\nSchema diffs struct: %#v\n\n", sc)

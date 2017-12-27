@@ -1,4 +1,4 @@
-install: removefolder applyversionhash goinstall revertversionchanges
+install: applyversionhash goinstall revertversionchanges
 	@echo "### Done! ###"
 .PHONY: install
 
