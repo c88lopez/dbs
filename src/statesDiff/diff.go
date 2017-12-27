@@ -89,7 +89,7 @@ func diffCurrentPrevious() error {
 	}
 
 	/*
-		here we check deeply for differences
+		here we check deeply for differences between the current schema and the next one
 	*/
 	var sc schemaChanges
 
@@ -172,6 +172,9 @@ func diffCurrentPrevious() error {
 		}
 	}
 
+	/*
+		finally we should check for new tables
+	*/
 	for _, nsTable := range nextSchema.Tables {
 		for _, csTable := range currentSchema.Tables {
 			if nsTable.Name != csTable.Name {
@@ -183,10 +186,6 @@ func diffCurrentPrevious() error {
 	}
 
 	fmt.Printf("\n\nSchema diffs struct: %#v\n\n", sc)
-
-	/*
-		finally we should check for new tables
-	*/
 
 	return nil
 }
