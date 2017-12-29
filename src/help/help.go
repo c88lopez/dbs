@@ -21,5 +21,6 @@ Commands:
 init      Initialize.
 config    Configure the database connection.
 new       Build and persist the current database state.
+diff      Build and persist the current database state.
 `)
 }

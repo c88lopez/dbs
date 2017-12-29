@@ -9,25 +9,27 @@ import (
 func migrateNextStatus(sc schemaChanges) {
 
 	for _, tableState := range sc.tables {
-		createDefinitionsStatement := ""
-		separator := ""
+		if tableState.Status == "new" {
+			createDefinitionsStatement := ""
+			separator := ""
 
-		for columnStateIndex, columnState := range tableState.TableFinal.Columns {
-			if columnStateIndex > 0 {
-				separator = ","
+			for columnStateIndex, columnState := range tableState.TableFinal.Columns {
+				if columnStateIndex > 0 {
+					separator = ","
+				}
+
+				fmt.Printf("default: %#v", columnState.DefaultValue)
+
+				createDefinitionsStatement += fmt.Sprintf(
+					"%s %s %s %s %s %s %s",
+					separator, columnState.Name, columnState.DataType, getNullableString(columnState),
+					getDefaultString(columnState), getAutoIncrementString(columnState), getPrimaryKeyString(columnState))
 			}
 
-			fmt.Printf("default: %#v", columnState.DefaultValue)
-
-			createDefinitionsStatement += fmt.Sprintf(
-				"%s %s %s %s %s %s %s",
-				separator, columnState.Name, columnState.DataType, getNullableString(columnState),
-				getDefaultString(columnState), getAutoIncrementString(columnState), getPrimaryKeyString(columnState))
+			fmt.Printf(
+				"CREATE TABLE %s (%s)",
+				tableState.TableFinal.Name, createDefinitionsStatement)
 		}
-
-		fmt.Printf(
-			"CREATE TABLE %s (%s)",
-			tableState.TableFinal.Name, createDefinitionsStatement)
 	}
 }
 

@@ -127,7 +127,7 @@ func diffCurrentNext() (schemaChanges, error) {
 				csTable.Engine != nextSchema.Tables[checkingTableIndex].Engine {
 				// The table has not the same definition
 				fmt.Printf("Should alter table %s\n", csTable.Name)
-				csTableStatus.Status = "alter_definition"
+				csTableStatus.Status = "alter"
 			}
 
 			for _, csColumn := range csTable.Columns {
