@@ -32,6 +32,10 @@ func Dispatch() error {
 		case "diff":
 			err = statesDiff.Diff()
 			break
+			break
+		case "check-statuses":
+			err = statesDiff.CheckStatus()
+			break
 		}
 	}
 

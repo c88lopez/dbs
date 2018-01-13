@@ -18,9 +18,10 @@ Usage: dbs <command> [<arg>, ...]
 
 Commands:
 
-init      Initialize.
-config    Configure the database connection.
-new       Build and persist the current database state.
-diff      Build and persist the current database state.
+init           Initialize.
+config         Configure the database connection.
+new            Build and persist the current database state.
+diff           Get queries to run
+check-status   List statuses, marking the current database status (if any)
 `)
 }
