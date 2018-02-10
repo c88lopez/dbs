@@ -1,4 +1,4 @@
-package handlers
+package errors
 
 import (
 	"fmt"
@@ -7,8 +7,8 @@ import (
 	"github.com/fatih/color"
 )
 
-// Error func
-func Error(e error) {
+// Handle func
+func Handle(e error) {
 	if nil != e {
 		color.Red("Error!")
 		fmt.Printf("\n%s\n", e)

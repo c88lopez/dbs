@@ -23,6 +23,7 @@ type Config struct {
 	Database string `json:"database"`
 }
 
+// GetMainFolderPath returns the absolute path of .dbs
 func GetMainFolderPath() (string, error) {
 	dir, err := os.Getwd()
 	if nil != err {
@@ -32,6 +33,7 @@ func GetMainFolderPath() (string, error) {
 	return dir + "/.dbs", nil
 }
 
+// SetConfigFilePath sets the global `filePath` with the config folder
 func SetConfigFilePath() error {
 	dir, err := GetMainFolderPath()
 	if nil == err {
@@ -41,6 +43,7 @@ func SetConfigFilePath() error {
 	return err
 }
 
+// GetConfigTemplate
 func GetConfigTemplate() ([]byte, error) {
 	baseConfig := getDefaultParameters()
 
@@ -180,7 +183,7 @@ func getDefaultParameters() Config {
 	return Config{
 		Driver:   "mysql",
 		Protocol: "tcp",
-		Host:     "172.17.0.2",
+		Host:     "127.0.0.1",
 		Port:     "3306",
 		Username: "root",
 		Password: "",

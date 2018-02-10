@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/c88lopez/dbs/src/handlers"
+	"github.com/c88lopez/dbs/src/errors"
 )
 
 // Execute dbs.
 func Execute() {
 	start := time.Now()
 
-	handlers.Error(Dispatch())
+	errors.Handle(Dispatch())
 
 	fmt.Printf("\nElapsed time: %s\n", time.Since(start))
 }
