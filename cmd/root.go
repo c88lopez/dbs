@@ -62,6 +62,8 @@ func initConfig() {
 		viper.SetDefault("Username", "root")
 		viper.SetDefault("Password", "")
 		viper.SetDefault("Database", "dbs")
+
+		viper.SafeWriteConfig()
 	}
 
 	// If a config file is found, read it in.
