@@ -16,4 +16,4 @@ goinstall:
 
 revertversionchanges:
 	@echo "### Reverting changes ###"
-	@git checkout -- src/help/help.go
+	@git checkout -- cmd/root.go
