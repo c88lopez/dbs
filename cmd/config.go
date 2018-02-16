@@ -10,8 +10,8 @@ var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Configure the database connection.",
 	Long:  "Configure the database connection.",
-	Run: func(cmd *cobra.Command, args []string) {
-		config.SetDatabaseConfigInteractively()
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return config.SetDatabaseConfigInteractively()
 	},
 }
 
