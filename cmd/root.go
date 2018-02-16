@@ -15,10 +15,9 @@ var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use: "dbs",
-	Long: `A database schema changes
+	Use:  "dbs",
+	Long: "A database schema changes",
 
-Version ~@DBS_VERSION@~`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	//	Run: func(cmd *cobra.Command, args []string) { },
@@ -55,6 +54,14 @@ func initConfig() {
 		// Search config in home directory with name "config" (without extension).
 		viper.AddConfigPath(mainFolder)
 		viper.SetConfigName("config")
+
+		viper.SetDefault("Driver", "mysql")
+		viper.SetDefault("Protocol", "tcp")
+		viper.SetDefault("Host", "127.0.0.1")
+		viper.SetDefault("Port", "3306")
+		viper.SetDefault("Username", "root")
+		viper.SetDefault("Password", "")
+		viper.SetDefault("Database", "dbs")
 	}
 
 	// If a config file is found, read it in.
