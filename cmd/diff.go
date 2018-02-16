@@ -1,8 +1,7 @@
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/c88lopez/dbs/src/statesDiff"
 	"github.com/spf13/cobra"
 )
 
@@ -12,7 +11,7 @@ var diffCmd = &cobra.Command{
 	Short: "Get queries to run",
 	Long:  `Get queries to run.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("diff called")
+		statesDiff.Diff()
 	},
 }
 

@@ -1,8 +1,7 @@
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/c88lopez/dbs/src/config"
 	"github.com/spf13/cobra"
 )
 
@@ -12,7 +11,7 @@ var configCmd = &cobra.Command{
 	Short: "Configure the database connection",
 	Long:  `Configure the database connection.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("config called")
+		config.SetDatabaseConfigInteractively()
 	},
 }
 

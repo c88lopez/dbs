@@ -1,8 +1,7 @@
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/c88lopez/dbs/src/common"
 	"github.com/spf13/cobra"
 )
 
@@ -12,7 +11,7 @@ var initCmd = &cobra.Command{
 	Short: "Initialize dbs",
 	Long:  `Initialize dbs.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("init called")
+		common.GenerateMainFolder()
 	},
 }
 

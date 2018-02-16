@@ -1,8 +1,7 @@
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/c88lopez/dbs/src/database"
 	"github.com/spf13/cobra"
 )
 
@@ -12,7 +11,7 @@ var newCmd = &cobra.Command{
 	Short: "Build and persist the current database state",
 	Long:  `Build and persist the current database state.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("new called")
+		database.New()
 	},
 }
 
