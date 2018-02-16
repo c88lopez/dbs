@@ -8,7 +8,7 @@ removefolder:
 
 applyversionhash:
 	@echo "### Replacing version ###"
-	@sed -i "s/~@DBS_VERSION@~/"$$(git rev-parse HEAD)"/g" src/help/help.go
+	@sed -i "s/~@DBS_VERSION@~/"$$(git rev-parse HEAD)"/g" cmd/root.go
 
 goinstall:
 	@echo "### Installing ###"
