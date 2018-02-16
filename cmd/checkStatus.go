@@ -8,8 +8,8 @@ import (
 // checkStatusCmd represents the checkStatus command
 var checkStatusCmd = &cobra.Command{
 	Use:   "checkStatus",
-	Short: "List statuses, marking the current database status (if any)",
-	Long:  `List statuses, marking the current database status (if any).`,
+	Short: "List statuses, marking the current database status (if any).",
+	Long:  "List statuses, marking the current database status (if any).",
 	Run: func(cmd *cobra.Command, args []string) {
 		statesDiff.CheckStatus()
 	},

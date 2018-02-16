@@ -10,8 +10,8 @@ var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Initialize dbs",
 	Long:  `Initialize dbs.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		common.GenerateMainFolder()
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return common.GenerateMainFolder()
 	},
 }
 

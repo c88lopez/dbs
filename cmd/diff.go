@@ -10,8 +10,8 @@ var diffCmd = &cobra.Command{
 	Use:   "diff",
 	Short: "Get queries to run",
 	Long:  `Get queries to run.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		statesDiff.Diff()
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return statesDiff.Diff()
 	},
 }
 
