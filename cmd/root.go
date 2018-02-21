@@ -54,6 +54,7 @@ func initConfig() {
 		// Search config in home directory with name "config" (without extension).
 		viper.AddConfigPath(mainFolder)
 		viper.SetConfigName("config")
+		viper.SetConfigType("yaml")
 
 		viper.SetDefault("Driver", "mysql")
 		viper.SetDefault("Protocol", "tcp")
@@ -63,7 +64,11 @@ func initConfig() {
 		viper.SetDefault("Password", "")
 		viper.SetDefault("Database", "dbs")
 
-		viper.SafeWriteConfig()
+		err = viper.SafeWriteConfig()
+		if err != nil {
+			errors.Handle(err)
+
+		}
 	}
 
 	// If a config file is found, read it in.
