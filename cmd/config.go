@@ -8,8 +8,8 @@ import (
 // configCmd represents the config command
 var configCmd = &cobra.Command{
 	Use:   "config",
-	Short: "Configure the database connection.",
-	Long:  "Configure the database connection.",
+	Short: "Configure the dbs.",
+	Long:  "Configure the dbs.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return config.SetDatabaseConfigInteractively()
 	},

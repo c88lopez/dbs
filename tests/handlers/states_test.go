@@ -9,7 +9,7 @@ import (
 
 func TestGetFileLastLine(t *testing.T) {
 	lastLineValue := "d7fb97dafb90adf90b70a9df7b908adfb7adfb09"
-	dummyFile, _ := os.Open("GetFileLastLine_dummyFile")
+	dummyFile, _ := os.Open("dummyHistory")
 
 	if handlers.GetLastState(dummyFile) != lastLineValue {
 		t.Fail()

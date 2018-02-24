@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// GetLastState Will return the hash representing the last state in $PWD/.dbs/history
 func GetLastState(historyFile *os.File) string {
 	var err error
 	lastLine := make([]byte, (sha1.Size*2)+1) // 40 chars (2 bytes each) + EOL ?
@@ -18,4 +19,9 @@ func GetLastState(historyFile *os.File) string {
 	}
 
 	return strings.TrimSpace(string(lastLine))
+}
+
+// GetCurrentState Will return the current schema state hash
+func GetCurrentState() {
+
 }

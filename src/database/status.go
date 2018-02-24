@@ -14,9 +14,8 @@ import (
 	"github.com/fatih/color"
 )
 
+// New new
 func New() error {
-	var err error
-
 	config.SetConfigFilePath()
 	loadConfiguration()
 
@@ -30,49 +29,34 @@ func New() error {
 		return err
 	}
 
-	err = generateJsonSchemaState(s)
-
-	return err
+	return generateJSONSchemaState(s)
 }
 
-func generateJsonSchemaState(s *entity.Schema) error {
+// generateJSONSchemaState(s *entity.Schema) generateJSONSchemaState
+func generateJSONSchemaState(s *entity.Schema) error {
 	fmt.Print("Generating json and json hash... ")
 
-	var err error
-
-	schemaJson, err := json.Marshal(s)
+	schemaJSON, err := json.Marshal(s)
 	if nil != err {
 		return err
 	}
 
-	jsonHash := sha1.Sum(schemaJson)
+	jsonHash := fmt.Sprintf("%x", sha1.Sum(schemaJSON))
 
 	statesDirPath := common.GetStatesDirPath()
-	jsonFilePath := fmt.Sprintf("%v%c%x", statesDirPath, os.PathSeparator, jsonHash)
+	jsonFilePath := fmt.Sprintf("%v%c%s", statesDirPath, os.PathSeparator, jsonHash)
 
 	historyFilePath := fmt.Sprintf("%v%c%v", statesDirPath, os.PathSeparator, "history")
 	if _, err = os.Stat(jsonFilePath); os.IsNotExist(err) {
-		jsonFile, err := os.Create(jsonFilePath)
-		if nil != err {
-			return err
-		}
-		defer jsonFile.Close()
-
-		_, err = jsonFile.Write(schemaJson)
-		if nil != err {
+		if err = createJSONFile(jsonFilePath, schemaJSON); err != nil {
 			return err
 		}
 
-		historyFile, err := os.OpenFile(historyFilePath, os.O_WRONLY|os.O_APPEND, 0644)
-		if nil != err {
+		if err = updateHistoryFile(historyFilePath, jsonHash); err != nil {
 			return err
 		}
-		defer historyFile.Close()
 
-		historyFile.WriteString(fmt.Sprintf("%x\n", jsonHash))
-
-		err = updateCurrent(statesDirPath, jsonHash)
-		if nil != err {
+		if err = updateCurrent(statesDirPath, jsonHash); nil != err {
 			return err
 		}
 
@@ -89,16 +73,11 @@ func generateJsonSchemaState(s *entity.Schema) error {
 		} else {
 			historyFile.Close()
 
-			historyFile, err := os.OpenFile(historyFilePath, os.O_WRONLY, 0644)
-			if nil != err {
+			if err = updateHistoryFile(historyFilePath, jsonHash); err != nil {
 				return err
 			}
-			defer historyFile.Close()
 
-			historyFile.WriteString(fmt.Sprintf("%x\n", jsonHash))
-
-			err = updateCurrent(statesDirPath, jsonHash)
-			if nil != err {
+			if err = updateCurrent(statesDirPath, jsonHash); nil != err {
 				return err
 			}
 
@@ -117,7 +96,7 @@ func loadConfiguration() {
 	color.Green("Done.\n")
 }
 
-func updateCurrent(statesDirPath string, jsonHash [20]byte) error {
+func updateCurrent(statesDirPath, jsonHash string) error {
 	currentStatePath := fmt.Sprintf("%x", jsonHash)
 	currentFilePath := fmt.Sprintf("%s%c%s", statesDirPath, os.PathSeparator, "current")
 
@@ -125,10 +104,29 @@ func updateCurrent(statesDirPath string, jsonHash [20]byte) error {
 		os.Remove(currentFilePath)
 	}
 
-	err := os.Symlink(currentStatePath, currentFilePath)
+	return os.Symlink(currentStatePath, currentFilePath)
+}
+
+func createJSONFile(jsonFilePath string, schemaJSON []byte) error {
+	jsonFile, err := os.Create(jsonFilePath)
 	if nil != err {
 		return err
 	}
+	defer jsonFile.Close()
 
-	return nil
+	_, err = jsonFile.Write(schemaJSON)
+
+	return err
+}
+
+func updateHistoryFile(historyFilePath, jsonHash string) error {
+	historyFile, err := os.OpenFile(historyFilePath, os.O_WRONLY|os.O_APPEND, 0644)
+	if nil != err {
+		return err
+	}
+	defer historyFile.Close()
+
+	_, err = historyFile.WriteString(jsonHash)
+
+	return err
 }
