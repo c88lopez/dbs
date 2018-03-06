@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"github.com/c88lopez/dbs/src/database"
+	"github.com/c88lopez/dbs/src/errors"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // newCmd represents the new command
@@ -10,6 +12,16 @@ var newCmd = &cobra.Command{
 	Use:   "new",
 	Short: "Build and persist the current database state.",
 	Long:  "Build and persist the current database state.",
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		initConfig()
+
+		err := viper.ReadInConfig()
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			err = errors.ErrNotInitialized
+		}
+
+		return err
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return database.New()
 	},

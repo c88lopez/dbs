@@ -1,8 +1,10 @@
 package cmd
 
 import (
+	"github.com/c88lopez/dbs/src/errors"
 	"github.com/c88lopez/dbs/src/statesDiff"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // diffCmd represents the diff command
@@ -10,6 +12,16 @@ var diffCmd = &cobra.Command{
 	Use:   "diff",
 	Short: "Get queries to run",
 	Long:  `Get queries to run.`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		initConfig()
+
+		err := viper.ReadInConfig()
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			err = errors.ErrNotInitialized
+		}
+
+		return err
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return statesDiff.Diff()
 	},

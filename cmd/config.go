@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 
+	"github.com/c88lopez/dbs/src/errors"
 	"github.com/c88lopez/dbs/src/mainFolder"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -18,9 +18,8 @@ var configCmd = &cobra.Command{
 		initConfig()
 
 		err := viper.ReadInConfig()
-
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			err = errors.New("dbs not initialized!")
+			err = errors.ErrNotInitialized
 		}
 
 		return err

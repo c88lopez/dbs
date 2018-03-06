@@ -31,7 +31,6 @@ func Execute() {
 func init() {
 	// 	cobra.OnInitialize(initConfig)
 	jww.SetStdoutThreshold(jww.LevelTrace)
-
 }
 
 // initConfig reads in config file if set.
