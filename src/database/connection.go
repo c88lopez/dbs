@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/c88lopez/dbs/src/config"
+	"github.com/c88lopez/dbs/src/mainFolder"
 	"github.com/fatih/color"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -16,10 +16,10 @@ func StartConnectionPool() error {
 	fmt.Print("Initializing connection pool... ")
 
 	if err := OpenConnectionPool(
-		config.Parameters.Username + ":" +
-			config.Parameters.Password + "@" + config.Parameters.Protocol + "(" +
-			config.Parameters.Host + ":" + config.Parameters.Port + ")/" +
-			config.Parameters.Database); err != nil {
+		mainFolder.GetParameters().Username + ":" +
+			mainFolder.GetParameters().Password + "@" + mainFolder.GetParameters().Protocol + "(" +
+			mainFolder.GetParameters().Host + ":" + mainFolder.GetParameters().Port + ")/" +
+			mainFolder.GetParameters().Database); err != nil {
 		return err
 	}
 
@@ -31,7 +31,7 @@ func StartConnectionPool() error {
 func OpenConnectionPool(dsn string) error {
 	var err error
 
-	if DbConnPool, err = sql.Open(config.Parameters.Driver, dsn); nil != err {
+	if DbConnPool, err = sql.Open(mainFolder.GetParameters().Driver, dsn); nil != err {
 		return err
 	}
 

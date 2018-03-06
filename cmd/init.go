@@ -1,7 +1,9 @@
 package cmd
 
 import (
-	"github.com/c88lopez/dbs/src/common"
+	"fmt"
+
+	"github.com/c88lopez/dbs/src/mainFolder"
 	"github.com/spf13/cobra"
 )
 
@@ -11,7 +13,9 @@ var initCmd = &cobra.Command{
 	Short: "Initialize dbs",
 	Long:  `Initialize dbs.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return common.GenerateMainFolder()
+		fmt.Print("Initializing... ")
+
+		return mainFolder.Generate()
 	},
 }
 

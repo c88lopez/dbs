@@ -6,17 +6,15 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/c88lopez/dbs/src/common"
-	"github.com/c88lopez/dbs/src/config"
 	"github.com/c88lopez/dbs/src/entity"
 	"github.com/c88lopez/dbs/src/handlers"
+	"github.com/c88lopez/dbs/src/mainFolder"
 
 	"github.com/fatih/color"
 )
 
 // New new
 func New() error {
-	config.SetConfigFilePath()
 	loadConfiguration()
 
 	if err := StartConnectionPool(); nil != err {
@@ -43,7 +41,7 @@ func generateJSONSchemaState(s *entity.Schema) error {
 
 	jsonHash := fmt.Sprintf("%x", sha1.Sum(schemaJSON))
 
-	statesDirPath := common.GetStatesDirPath()
+	statesDirPath := mainFolder.GetStatesDirPath()
 	jsonFilePath := fmt.Sprintf("%v%c%s", statesDirPath, os.PathSeparator, jsonHash)
 
 	historyFilePath := fmt.Sprintf("%v%c%v", statesDirPath, os.PathSeparator, "history")
@@ -52,7 +50,7 @@ func generateJSONSchemaState(s *entity.Schema) error {
 			return err
 		}
 
-		if err = updateHistoryFile(historyFilePath, jsonHash); err != nil {
+		if err = updateHistoryFile(mainFolder.GetHistoryFilePath(), jsonHash); err != nil {
 			return err
 		}
 
@@ -91,7 +89,7 @@ func generateJSONSchemaState(s *entity.Schema) error {
 func loadConfiguration() {
 	fmt.Print("Loading configuration... ")
 
-	config.LoadConfig()
+	mainFolder.LoadConfig()
 
 	color.Green("Done.\n")
 }

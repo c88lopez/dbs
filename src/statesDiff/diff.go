@@ -7,8 +7,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/c88lopez/dbs/src/config"
 	"github.com/c88lopez/dbs/src/entity"
+	"github.com/c88lopez/dbs/src/mainFolder"
 )
 
 // func Diff
@@ -31,10 +31,7 @@ func Diff() error {
 }
 
 func diffCurrentNext() (schemaChanges, error) {
-	dir, err := config.GetMainFolderPath()
-	if nil != err {
-		return schemaChanges{}, err
-	}
+	dir := mainFolder.GetMainFolderPath()
 
 	/*
 		get paths (we can put these as get in another place

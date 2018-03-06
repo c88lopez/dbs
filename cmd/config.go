@@ -1,7 +1,9 @@
 package cmd
 
 import (
-	"github.com/c88lopez/dbs/src/config"
+	"fmt"
+
+	"github.com/c88lopez/dbs/src/mainFolder"
 	"github.com/spf13/cobra"
 )
 
@@ -10,8 +12,13 @@ var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Configure the dbs.",
 	Long:  "Configure the dbs.",
+	PreRun: func(cmd *cobra.Command, args []string) {
+		initConfig()
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return config.SetDatabaseConfigInteractively()
+		fmt.Print("Configuring database parameters...\n")
+
+		return mainFolder.SetDatabaseConfigInteractively()
 	},
 }
 
