@@ -5,6 +5,7 @@ import (
 
 	"github.com/c88lopez/dbs/src/mainFolder"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // initCmd represents the init command
@@ -21,6 +22,14 @@ var initCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(initCmd)
+
+	viper.SetDefault("driver", "mysql")
+	viper.SetDefault("protocol", "tcp")
+	viper.SetDefault("host", "127.0.0.1")
+	viper.SetDefault("port", 3306)
+	viper.SetDefault("username", "root")
+	viper.SetDefault("password", "")
+	viper.SetDefault("database", "dbs")
 
 	// Here you will define your flags and configuration settings.
 

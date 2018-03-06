@@ -1,5 +1,7 @@
 .idea
-.dbs
+.vscode/launch.json
 
 *.swp
 *.pprof
+*.dbs
+dbs

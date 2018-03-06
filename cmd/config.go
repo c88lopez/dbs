@@ -5,6 +5,7 @@ import (
 
 	"github.com/c88lopez/dbs/src/mainFolder"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // configCmd represents the config command
@@ -12,8 +13,10 @@ var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Configure the dbs.",
 	Long:  "Configure the dbs.",
-	PreRun: func(cmd *cobra.Command, args []string) {
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 		initConfig()
+
+		return viper.ReadInConfig()
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Print("Configuring database parameters...\n")

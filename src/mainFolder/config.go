@@ -6,6 +6,7 @@ import (
 	"os"
 	"syscall"
 
+	"github.com/spf13/viper"
 	"golang.org/x/crypto/ssh/terminal"
 )
 
@@ -20,18 +21,6 @@ type Config struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Database string `json:"database"`
-}
-
-// GetConfigTemplate returns the default json
-func GetConfigTemplate() ([]byte, error) {
-	baseConfig := getDefaultParameters()
-
-	baseJSON, err := json.Marshal(baseConfig)
-	if nil != err {
-		return nil, err
-	}
-
-	return baseJSON, nil
 }
 
 // LoadConfig get the config json and return it
@@ -49,22 +38,15 @@ func LoadConfig() error {
 
 // SetDatabaseConfigInteractively It will as the user for the config values
 func SetDatabaseConfigInteractively() error {
-	var err error
+	getDriver()
+	getProtocol()
+	getHost()
+	getPort()
+	getUsername()
+	getPassword()
+	getDatabase()
 
-	defaultParameters := getDefaultParameters()
-
-	parameters.Driver = getDriver(defaultParameters.Driver)
-	parameters.Protocol = getProtocol(defaultParameters.Protocol)
-	parameters.Host = getHost(defaultParameters.Host)
-	parameters.Port = getPort(defaultParameters.Port)
-	parameters.Username = getUsername(defaultParameters.Username)
-
-	if parameters.Password, err = getPassword(); nil == err {
-		parameters.Database = getDatabase(defaultParameters.Database)
-		saveConfig(parameters)
-	}
-
-	return err
+	return viper.WriteConfig()
 }
 
 // GetParameters func
@@ -72,119 +54,79 @@ func GetParameters() *Config {
 	return parameters
 }
 
-func getDriver(defaultValue string) string {
+func getDriver() {
 	var driver string
 
-	fmt.Printf("Driver (%s): ", defaultValue)
+	fmt.Printf("Driver (%s): ", viper.Get("driver"))
 	fmt.Scanln(&driver)
 
-	if "" == driver {
-		driver = defaultValue
+	if "" != driver {
+		viper.Set("driver", driver)
 	}
-
-	return driver
 }
 
-func getProtocol(defaultValue string) string {
+func getProtocol() {
 	var protocol string
 
-	fmt.Printf("Protocol (%s): ", defaultValue)
+	fmt.Printf("Protocol (%s): ", viper.Get("protocol"))
 	fmt.Scanln(&protocol)
 
-	if "" == protocol {
-		protocol = defaultValue
+	if "" != protocol {
+		viper.Set("protocol", protocol)
 	}
-
-	return protocol
 }
 
-func getHost(defaultValue string) string {
+func getHost() {
 	var host string
 
-	fmt.Printf("Host (%s): ", defaultValue)
+	fmt.Printf("Host (%s): ", viper.Get("host"))
 	fmt.Scanln(&host)
 
-	if "" == host {
-		host = defaultValue
+	if "" != host {
+		viper.Set("host", host)
 	}
-
-	return host
 }
 
-func getPort(defaultValue string) string {
+func getPort() {
 	var port string
 
-	fmt.Printf("Port (%s): ", defaultValue)
+	fmt.Printf("Port (%d): ", viper.Get("port"))
 	fmt.Scanln(&port)
 
-	if "" == port {
-		port = defaultValue
+	if "" != port {
+		viper.Set("port", port)
 	}
-
-	return port
 }
 
-func getUsername(defaultValue string) string {
+func getUsername() {
 	var username string
 
-	fmt.Printf("Username (%s): ", defaultValue)
+	fmt.Printf("Username (%s): ", viper.Get("username"))
 	fmt.Scanln(&username)
 
-	if "" == username {
-		username = defaultValue
+	if "" != username {
+		viper.Set("username", username)
 	}
-
-	return username
 }
 
-func getPassword() (string, error) {
+func getPassword() {
 	fmt.Print("Password: ")
 
 	bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
 	if nil != err {
-		return "", err
+		panic(err)
 	}
 
-	return string(bytePassword), nil
+	viper.Set("Password", string(bytePassword))
 }
 
-func getDatabase(defaultValue string) string {
+func getDatabase() {
 	var database string
 
-	fmt.Print("\nDatabase(dbs): ")
+	fmt.Printf("\nDatabase (%s): ", viper.Get("database"))
 	fmt.Scanln(&database)
 
-	if "" == database {
-		database = defaultValue
+	if "" != database {
+		viper.Set("database", database)
 	}
-
-	return database
-}
-
-func getDefaultParameters() Config {
-	return Config{
-		Driver:   "mysql",
-		Protocol: "tcp",
-		Host:     "127.0.0.1",
-		Port:     "3306",
-		Username: "root",
-		Password: "",
-		Database: "dbs",
-	}
-}
-
-func saveConfig(parameters *Config) error {
-	file, err := os.OpenFile(GetConfigFilePath(), os.O_WRONLY, 0600)
-	if nil != err {
-		return err
-	}
-	defer file.Close()
-
-	file.Truncate(0)
-	jsonString, err := json.Marshal(parameters)
-	if nil == err {
-		_, err = file.Write(jsonString)
-	}
-
-	return err
 }

@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/fatih/color"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -13,13 +14,9 @@ var (
 
 // Generate func
 func Generate() error {
-	var (
-		err      error
-		template []byte
-	)
-
 	setMainFolderPath()
-	_, err = os.Stat(mainFolderPath)
+
+	_, err := os.Stat(mainFolderPath)
 	if os.IsNotExist(err) {
 		newDirPaths := [1]string{"/states"}
 
@@ -27,12 +24,9 @@ func Generate() error {
 			os.MkdirAll(mainFolderPath+newDirPath, 0775)
 		}
 
-		template, err = GetConfigTemplate()
-		if nil == err {
-			if err = ioutil.WriteFile(GetConfigFilePath(), template, 0600); nil == err {
-				if err = ioutil.WriteFile(GetHistoryFilePath(), []byte{}, 0644); nil == err {
-					color.Green("Done.\n")
-				}
+		if err = viper.WriteConfigAs(GetConfigFilePath()); nil == err {
+			if err = ioutil.WriteFile(GetHistoryFilePath(), []byte{}, 0644); nil == err {
+				color.Green("Done.\n")
 			}
 		}
 	} else {
@@ -48,12 +42,14 @@ func GetMainFolderPath() string {
 		setMainFolderPath()
 	}
 
+	viper.AddConfigPath(mainFolderPath)
+
 	return mainFolderPath
 }
 
 // GetConfigFilePath gets the global `configFilePath`
 func GetConfigFilePath() string {
-	return GetMainFolderPath() + "/config"
+	return GetMainFolderPath() + "/config.yaml"
 }
 
 // GetStatesDirPath func
