@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/c88lopez/dbs/src/mainFolder"
@@ -16,7 +17,13 @@ var configCmd = &cobra.Command{
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		initConfig()
 
-		return viper.ReadInConfig()
+		err := viper.ReadInConfig()
+
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			err = errors.New("dbs not initialized!")
+		}
+
+		return err
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Print("Configuring database parameters...\n")
