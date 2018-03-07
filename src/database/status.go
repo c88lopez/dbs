@@ -8,7 +8,7 @@ import (
 
 	"github.com/c88lopez/dbs/src/entity"
 	"github.com/c88lopez/dbs/src/handlers"
-	"github.com/c88lopez/dbs/src/mainFolder"
+	"github.com/c88lopez/dbs/src/mainfolder"
 
 	"github.com/fatih/color"
 )
@@ -39,7 +39,7 @@ func generateJSONSchemaState(s *entity.Schema) error {
 
 	jsonHash := fmt.Sprintf("%x", sha1.Sum(schemaJSON))
 
-	statesDirPath := mainFolder.GetStatesDirPath()
+	statesDirPath := mainfolder.GetStatesDirPath()
 	jsonFilePath := fmt.Sprintf("%v%c%s", statesDirPath, os.PathSeparator, jsonHash)
 
 	historyFilePath := fmt.Sprintf("%v%c%v", statesDirPath, os.PathSeparator, "history")
@@ -48,7 +48,7 @@ func generateJSONSchemaState(s *entity.Schema) error {
 			return err
 		}
 
-		if err = updateHistoryFile(mainFolder.GetHistoryFilePath(), jsonHash); err != nil {
+		if err = updateHistoryFile(mainfolder.GetHistoryFilePath(), jsonHash); err != nil {
 			return err
 		}
 
@@ -82,14 +82,6 @@ func generateJSONSchemaState(s *entity.Schema) error {
 	}
 
 	return nil
-}
-
-func loadConfiguration() {
-	fmt.Print("Loading configuration... ")
-
-	mainFolder.LoadConfig()
-
-	color.Green("Done.\n")
 }
 
 func updateCurrent(statesDirPath, jsonHash string) error {

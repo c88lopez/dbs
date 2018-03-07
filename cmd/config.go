@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/c88lopez/dbs/src/errors"
-	"github.com/c88lopez/dbs/src/mainFolder"
+	"github.com/c88lopez/dbs/src/mainfolder"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -27,7 +27,7 @@ var configCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Print("Configuring database parameters...\n")
 
-		return mainFolder.SetDatabaseConfigInteractively()
+		return mainfolder.SetDatabaseConfigInteractively()
 	},
 }
 

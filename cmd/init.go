@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/c88lopez/dbs/src/mainFolder"
+	"github.com/c88lopez/dbs/src/mainfolder"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -16,7 +16,7 @@ var initCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Print("Initializing... ")
 
-		return mainFolder.Generate()
+		return mainfolder.Generate()
 	},
 }
 

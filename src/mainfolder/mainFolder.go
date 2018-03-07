@@ -1,4 +1,4 @@
-package mainFolder
+package mainfolder
 
 import (
 	"io/ioutil"
@@ -30,7 +30,7 @@ func Generate() error {
 			}
 		}
 	} else {
-		color.Yellow("Already initialized!\n")
+		color.HiYellow("Already initialized!\n")
 	}
 
 	return err

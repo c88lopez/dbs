@@ -1,4 +1,4 @@
-package statesDiff
+package statesdiff
 
 import "os"
 

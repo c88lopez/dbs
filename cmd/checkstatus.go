@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/c88lopez/dbs/src/errors"
-	"github.com/c88lopez/dbs/src/statesDiff"
+	"github.com/c88lopez/dbs/src/statesdiff"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -23,7 +23,7 @@ var checkStatusCmd = &cobra.Command{
 		return err
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return statesDiff.CheckStatus()
+		return statesdiff.CheckStatus()
 	},
 }
 

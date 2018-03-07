@@ -1,4 +1,4 @@
-package statesDiff
+package statesdiff
 
 import (
 	"bufio"
@@ -8,10 +8,10 @@ import (
 	"strings"
 
 	"github.com/c88lopez/dbs/src/entity"
-	"github.com/c88lopez/dbs/src/mainFolder"
+	"github.com/c88lopez/dbs/src/mainfolder"
 )
 
-// func Diff
+// Diff func
 func Diff() error {
 	var err error
 	var sc schemaChanges
@@ -31,7 +31,7 @@ func Diff() error {
 }
 
 func diffCurrentNext() (schemaChanges, error) {
-	dir := mainFolder.GetMainFolderPath()
+	dir := mainfolder.GetMainFolderPath()
 
 	/*
 		get paths (we can put these as get in another place

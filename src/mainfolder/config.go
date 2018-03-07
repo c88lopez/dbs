@@ -1,9 +1,7 @@
-package mainFolder
+package mainfolder
 
 import (
-	"encoding/json"
 	"fmt"
-	"os"
 	"syscall"
 
 	"github.com/spf13/viper"
@@ -21,19 +19,6 @@ type Config struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Database string `json:"database"`
-}
-
-// LoadConfig get the config json and return it
-func LoadConfig() error {
-	file, err := os.Open(GetMainFolderPath())
-	if nil != err {
-		return err
-	}
-	defer file.Close()
-
-	decoder := json.NewDecoder(file)
-
-	return decoder.Decode(&parameters)
 }
 
 // SetDatabaseConfigInteractively It will as the user for the config values
