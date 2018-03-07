@@ -4,8 +4,6 @@ import (
 	"github.com/c88lopez/dbs/src/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	jww "github.com/spf13/jwalterweatherman"
 )
 
 var cfgFile string
@@ -30,7 +28,7 @@ func Execute() {
 
 func init() {
 	// 	cobra.OnInitialize(initConfig)
-	jww.SetStdoutThreshold(jww.LevelTrace)
+	// jww.SetStdoutThreshold(jww.LevelTrace)
 }
 
 // initConfig reads in config file if set.

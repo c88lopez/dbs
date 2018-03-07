@@ -11,11 +11,6 @@ type Schema struct {
 	Tables []Table `json:"tables"`
 }
 
-// LoadTables func
-func (s *Schema) LoadTables() bool {
-	return true
-}
-
 // AddTable func
 func (s *Schema) AddTable(t Table) *Schema {
 	s.Tables = append(s.Tables, t)

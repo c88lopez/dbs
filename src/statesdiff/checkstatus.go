@@ -2,7 +2,7 @@ package statesdiff
 
 import "os"
 
-// func Diff
+// CheckStatus func
 func CheckStatus() error {
 	var err error
 	var sc schemaChanges

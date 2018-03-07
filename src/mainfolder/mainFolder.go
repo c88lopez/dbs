@@ -30,7 +30,7 @@ func Generate() error {
 			}
 		}
 	} else {
-		color.HiYellow("Already initialized!\n")
+		color.Yellow("Already initialized!\n")
 	}
 
 	return err

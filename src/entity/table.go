@@ -37,9 +37,7 @@ func (t *Table) AddForeignKey(f ForeignKey) *Table {
 
 // Fetch func
 func (t *Table) Fetch(db *sql.DB) error {
-	var err error
-
-	err = t.FetchColumns(db)
+	err := t.FetchColumns(db)
 	if nil == err {
 		err = t.FetchIndexes(db)
 		if nil == err {

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/fatih/color"
 	"github.com/spf13/viper"
 
 	// Unnamed import
@@ -16,11 +17,18 @@ var dbConnPool *sql.DB
 func StartConnectionPool() error {
 	fmt.Print("Initializing connection pool... ")
 
-	return OpenConnectionPool(
+	err := OpenConnectionPool(
 		viper.GetString("username") + ":" +
 			viper.GetString("password") + "@" + viper.GetString("protocol") + "(" +
 			viper.GetString("host") + ":" + viper.GetString("port") + ")/" +
 			viper.GetString("database"))
+	if err != nil {
+		return err
+	}
+
+	color.Green("Done.\n")
+
+	return err
 }
 
 // OpenConnectionPool func
