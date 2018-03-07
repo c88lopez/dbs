@@ -3,4 +3,6 @@
 *.swp
 *.pprof
 *.dbs
+
 dbs
+debug
