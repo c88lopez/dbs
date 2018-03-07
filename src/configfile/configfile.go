@@ -1,14 +1,13 @@
-package mainfolder
+package configfile
 
 import (
 	"fmt"
 	"syscall"
 
+	"github.com/c88lopez/dbs/src/mainfolder"
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/ssh/terminal"
 )
-
-var parameters = new(Config)
 
 // Config struct
 type Config struct {
@@ -31,14 +30,8 @@ func SetDatabaseConfigInteractively() error {
 	getPassword()
 	getDatabase()
 
-	return viper.WriteConfigAs(GetConfigFilePath())
+	return viper.WriteConfigAs(mainfolder.GetConfigFilePath())
 }
-
-// GetParameters func
-func GetParameters() *Config {
-	return parameters
-}
-
 func getDriver() {
 	var driver string
 
