@@ -62,6 +62,11 @@ func GetHistoryFilePath() string {
 	return GetStatesDirPath() + "/history"
 }
 
+// GetCurrentFilePath func
+func GetCurrentFilePath() string {
+	return GetStatesDirPath() + "/current"
+}
+
 // setMainFolderPath func
 func setMainFolderPath() {
 	dir, err := os.Getwd()

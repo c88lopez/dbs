@@ -85,14 +85,13 @@ func generateJSONSchemaState(s *entity.Schema) error {
 }
 
 func updateCurrent(statesDirPath, jsonHash string) error {
-	currentStatePath := fmt.Sprintf("%x", jsonHash)
 	currentFilePath := fmt.Sprintf("%s%c%s", statesDirPath, os.PathSeparator, "current")
 
 	if _, err := os.Stat(currentFilePath); !os.IsNotExist(err) {
 		os.Remove(currentFilePath)
 	}
 
-	return os.Symlink(currentStatePath, currentFilePath)
+	return os.Symlink(jsonHash, currentFilePath)
 }
 
 func createJSONFile(jsonFilePath string, schemaJSON []byte) error {
