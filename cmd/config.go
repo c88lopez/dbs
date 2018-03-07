@@ -3,10 +3,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/c88lopez/dbs/src/errors"
 	"github.com/c88lopez/dbs/src/mainfolder"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // configCmd represents the config command
@@ -17,12 +15,14 @@ var configCmd = &cobra.Command{
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		initConfig()
 
-		err := viper.ReadInConfig()
-		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			err = errors.ErrNotInitialized
-		}
+		// err := viper.ReadInConfig()
+		// if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+		// 	err = errors.ErrNotInitialized
+		// }
 
-		return err
+		// return err
+
+		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Print("Configuring database parameters...\n")

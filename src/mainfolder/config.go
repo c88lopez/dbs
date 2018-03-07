@@ -31,7 +31,7 @@ func SetDatabaseConfigInteractively() error {
 	getPassword()
 	getDatabase()
 
-	return viper.WriteConfig()
+	return viper.WriteConfigAs(GetConfigFilePath())
 }
 
 // GetParameters func

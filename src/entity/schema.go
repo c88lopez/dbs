@@ -1,10 +1,13 @@
 package entity
 
-import "database/sql"
+import (
+	"database/sql"
+
+	"github.com/spf13/viper"
+)
 
 // Schema struct
 type Schema struct {
-	Name          string `json:"name"`
 	CharsetName   string `json:"charsetName"`
 	CollationName string `json:"collationName"`
 
@@ -26,7 +29,7 @@ func (s *Schema) GetTables() []Table {
 // LoadInformationSchema func
 func (s *Schema) LoadInformationSchema(db *sql.DB) error {
 	rows, err := db.Query(`SELECT DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME 
-	FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '` + s.Name + `'`)
+	FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '` + viper.GetString("database") + `'`)
 
 	if nil == err {
 		defer rows.Close()

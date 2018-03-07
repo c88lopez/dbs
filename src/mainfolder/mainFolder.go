@@ -49,7 +49,7 @@ func GetMainFolderPath() string {
 
 // GetConfigFilePath gets the global `configFilePath`
 func GetConfigFilePath() string {
-	return GetMainFolderPath() + "/config.yaml"
+	return "dbsConfig.yaml"
 }
 
 // GetStatesDirPath func

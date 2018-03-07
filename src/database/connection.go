@@ -28,7 +28,7 @@ func StartConnectionPool() error {
 
 	color.Green("Done.\n")
 
-	return err
+	return nil
 }
 
 // OpenConnectionPool func

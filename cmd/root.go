@@ -33,7 +33,7 @@ func init() {
 
 // initConfig reads in config file if set.
 func initConfig() {
-	viper.AddConfigPath("$PWD/.dbs/")
-	viper.SetConfigName("config")
+	viper.AddConfigPath(".")
+	viper.SetConfigName("dbsConfig")
 	viper.SetConfigType("yaml")
 }
