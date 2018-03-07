@@ -15,8 +15,6 @@ import (
 
 // New new
 func New() error {
-	loadConfiguration()
-
 	if err := StartConnectionPool(); nil != err {
 		return err
 	}
